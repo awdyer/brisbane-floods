@@ -20,10 +20,9 @@
     
 //global vars 
 var apiKey = "71lcag6a17k5r6a7";          
-var map;
-var geocoder;
+var map, geocoder;
 var photoInfoBox;
-var searchDate = 0;
+var prevSearchTerm, prevMinYear, prevMaxYear, prevPageA, prevPageP;
 
 //map marker management - global
 google.maps.Map.prototype.markers = new Array();
@@ -53,13 +52,15 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function() { PerformSearch(1893); return false; });
-    $("#tm1931").on("click", function() { PerformSearch(1931); return false; });
-    $("#tm1974").on("click", function() { PerformSearch(1974); return false; });
-    $("#tm2011").on("click", function() { PerformSearch(2011); return false; });
-    $("#tm2013").on("click", function() { PerformSearch(2013); return false; });
+    $("#tm1893").on("click", function() { newSearch(1893); return false; });
+    $("#tm1931").on("click", function() { newSearch(1931); return false; });
+    $("#tm1974").on("click", function() { newSearch(1974); return false; });
+    $("#tm2011").on("click", function() { newSearch(2011); return false; });
+    $("#tm2013").on("click", function() { newSearch(2013); return false; });
 
     $("#f_toggle").on("click", function() { toggleDiv("#filters"); return false; });
+    $("#a_load").on("click", function() { searchArticles(prevSearchTerm, prevMinYear, prevMaxYear); return false; });
+    $("#p_load").on("click", function() { searchPictures(prevSearchTerm, prevMinYear, prevMaxYear); return false; });
 
     //Hide advanced options
     toggleDiv("#filters");
@@ -91,33 +92,36 @@ $(window).load(function () {
 });
 
 
-function PerformSearch(searchValue) {
+function newSearch(searchYear, searchTerm, minYear, maxYear) {
 
-    //if input is -3, use previous year to perform area search
-    if (searchValue != -3)
-        searchDate = searchValue;
+    //Only searchTerm is required
 
+    //Do a new search, clear existing results
 
-    //var searchTerm = $("#searchTerm").val();
-    var searchTerm = "brisbane floods";
-    var sortBy = "relevance";
+    //default value for searchTerm is "brisbane floods"
+    searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods" + searchTerm;
 
-    if (searchValue == -3)
-        searchTerm += " " + $('#tb_area').val();
-
-    //If searchDate is -2, a manual search is performed, so get values from textboxes
-    var minYear, maxYear;
-    if (searchDate != -2) {
-        minYear = searchDate - 1;
-        maxYear = searchDate + 2;
-    } else {
-        minYear = $('#tb_minYear').val();
-        maxYear = $('#tb_maxYear').val();
+    //if searchYear is -2, minYear and maxYear have manually been passed
+    if (searchYear != -2) {
+        minYear = searchYear - 1; //give some leeway for years
+        maxYear = searchYear + 2;
     }
 
+    //set history
+    prevSearchTerm = searchTerm;
+    prevMinYear = minYear;
+    prevMaxYear = maxYear;
+    prevPageA = 0;
+    prevPageP = 0;
+
+    //clear existing results
+    $('#articles').empty();
+    map.clearMarkers();
+    if (photoInfoBox) photoInfoBox.close();
+
+    //search
     searchArticles(searchTerm, minYear, maxYear);
     searchPictures(searchTerm, minYear, maxYear);
-
 }
 
 
@@ -126,12 +130,12 @@ function searchArticles(searchTerm, minYear, maxYear) {
     //Perform article search
 
     var searchZone = "newspaper";
+    var maxArticles = 30;
 
     var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" 
-        + searchZone + "&sortby=relevance&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&callback=?";
+        + searchZone + "&sortby=relevance&n=" + maxArticles + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
 
-    //Clear articles div
-    $('#articles').empty();
+    prevPageA += maxArticles;
 
     //Query Trove, process each article returned
     $.getJSON(articleURL, function (data) {
@@ -151,11 +155,9 @@ function searchPictures(searchTerm, minYear, maxYear) {
     var maxPictures = 100;
 
     var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" 
-        + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&callback=?";
+        + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";    
 
-    //remove existing markers and close infobox
-    map.clearMarkers();
-    if (photoInfoBox) photoInfoBox.close();
+    prevPageP += maxPictures;
 
     //Query Trove, process each picture returned
     $.getJSON(pictureURL, function (data) {
@@ -174,6 +176,7 @@ function processArticle(index, item) {
         + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
 
     $('#articles').append(text);
+    console.log("article +")
 }
 
 
@@ -207,6 +210,7 @@ function processPicture(index, item) {
 
             //Successful in finding lat/long, so place a marker
             placeMarker(markerPos, item.title, setInfoBoxContent(item, loc));
+            console.log("picture +")
             return;
         }
     }
@@ -327,7 +331,7 @@ function toggleDiv(div) {
                     </map>
                 </div>
 
-                <a id="f_toggle" href="#" alt="Advanced search">Advanced search</a>
+                <a id="f_toggle" href="#">Advanced search</a>
                 <div id="filters" class="img-center">
 
                     <div id="f_same">
@@ -356,7 +360,6 @@ function toggleDiv(div) {
                         <input id="fp_area" type="text">
                         <input id="fp_keywords" type="text">
                     </div>
-                    
 
                 </div>
             </div>
@@ -366,6 +369,8 @@ function toggleDiv(div) {
             </div>
             <div id="rightside">
                 <div id="map_canvas"></div>
+                <a id="a_load" href="#">See more articles</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+                <a id="p_load" href="#"> Load more photos</a>
             </div>
             <div id="footer">
                 <!-- Powered by Trove -->
