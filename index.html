@@ -22,6 +22,7 @@
 var map;
 var geocoder;
 var photoInfoBox;
+var searchDate = 0;
 
 //managing markers
 google.maps.Map.prototype.markers = new Array();
@@ -73,7 +74,11 @@ $(window).load(function () {
     //$("#searchbtn").bind("click", function() {
 });
 
-function PerformSearch(searchDate) {
+function PerformSearch(searchValue) {
+
+    //if input is -3, use previous year to perform area search
+    if (searchValue != -3)
+        searchDate = searchValue;
 
     //Search parameters
     var apiKey = "71lcag6a17k5r6a7";
@@ -82,12 +87,22 @@ function PerformSearch(searchDate) {
     var searchTerm = "brisbane floods";
     var sortBy = "relevance";
 
+    if (searchValue == -3)
+        searchTerm += " " + $('#tb_area').val();
+
     //If searchDate is -2, a manual search is performed, so get values from textboxes
-    minYear = JSON.stringify(searchDate - 1);
-    maxYear = JSON.stringify(searchDate + 2);
+    var minYear, maxYear;
+    if (searchDate != -2) {
+        minYear = JSON.stringify(searchDate - 1);
+        maxYear = JSON.stringify(searchDate + 2);
+    } else {
+        minYear = $('#tb_minYear').val();
+        maxYear = $('#tb_maxYear').val();
+    }
+    console.log(minYear + "," + maxYear);
 
     // Search newspaper articles
-	var searchZone = "newspaper";
+    var searchZone = "newspaper";
     var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=" + sortBy + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]" + "&callback=?";
 
     // Get the article results as JSON and display
@@ -137,11 +152,11 @@ function getPictureInfo(index, item) {
     //check if 'coverage' tag exists
     if (typeof item.version[0].record[0] === 'object') {
         if (typeof item.version[0].record[0].metadata === 'object') {
-        	if (typeof item.version[0].record[0].metadata.dc === 'object') {
-	            if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
-	                un = item.version[0].record[0].metadata.dc.coverage;
-	                loc = true;
-	            }
+            if (typeof item.version[0].record[0].metadata.dc === 'object') {
+                if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
+                    un = item.version[0].record[0].metadata.dc.coverage;
+                    loc = true;
+                }
             }
         }
     }
@@ -151,98 +166,98 @@ function getPictureInfo(index, item) {
     //if location exists, get lat/long coords from it
     if (loc) {
 
-    	//check if it contains lat/long
+        //check if it contains lat/long
         var point = un.match(/-?\d+\.\d+/g);
 
         if (typeof point === 'object') { //doesn't seem to do anything?
 
-	        var lat = parseFloat(point[0]);
-	        var lng = parseFloat(point[1]);
+            var lat = parseFloat(point[0]);
+            var lng = parseFloat(point[1]);
 
 
-	        //add marker
-	        var photoPos = new google.maps.LatLng(lat, lng);
+            //add marker
+            var photoPos = new google.maps.LatLng(lat, lng);
 
-	        var photoMarker = new google.maps.Marker({
-	            position: photoPos,
-	            map: map,
-	            title: item.title
-	        });
+            var photoMarker = new google.maps.Marker({
+                position: photoPos,
+                map: map,
+                title: item.title
+            });
 
-	        google.maps.event.addListener(photoMarker, 'click', function () {
+            google.maps.event.addListener(photoMarker, 'click', function () {
 
-	            //close existing infobox
-	            if (photoInfoBox) photoInfoBox.close();
+                //close existing infobox
+                if (photoInfoBox) photoInfoBox.close();
 
-	            //set content
+                //set content
 
-	            //check if thumbnail exists, and if so get URL
-		        var thumburl;
-		        for (var i = 0; i < item.identifier.length; i++) {
-		            if (typeof item.identifier[i].linktype === 'string') {
-		                if (item.identifier[i].linktype == 'thumbnail') {
-		                    thumburl = item.identifier[i].value;
-		                }
-		            }
-		        }
+                //check if thumbnail exists, and if so get URL
+                var thumburl;
+                for (var i = 0; i < item.identifier.length; i++) {
+                    if (typeof item.identifier[i].linktype === 'string') {
+                        if (item.identifier[i].linktype == 'thumbnail') {
+                            thumburl = item.identifier[i].value;
+                        }
+                    }
+                }
 
-		        //photo description
-	            var snippet = "";
-	            if (typeof item.snippet === 'string') snippet = item.snippet;
+                //photo description
+                var snippet = "";
+                if (typeof item.snippet === 'string') snippet = item.snippet;
 
-	            //infobox HTML
-	            var info = "<div class='mapinfobox'><p><a href='" + item.identifier[0].value + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" + un.replace(/-?\d+\.\d+/g, '') + "<br /></p><p>" + snippet + "</p></div>";
+                //infobox HTML
+                var info = "<div class='mapinfobox'><p><a href='" + item.identifier[0].value + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" + un.replace(/-?\d+\.\d+/g, '') + "<br /></p><p>" + snippet + "</p></div>";
 
 
-	            //create the infobox
-	            photoInfoBox = new InfoBox({
-	                content: info,
-	                maxWidth: 150,
-	                pixelOffset: new google.maps.Size(-140, 0),
-	                zIndex: null,
-	                boxStyle: {
-	                    background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
-	                    opacity: 0.95
-	                },
-	                closeBoxMargin: "12px 4px 2px 2px",
+                //create the infobox
+                photoInfoBox = new InfoBox({
+                    content: info,
+                    maxWidth: 150,
+                    pixelOffset: new google.maps.Size(-140, 0),
+                    zIndex: null,
+                    boxStyle: {
+                        background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
+                        opacity: 0.95
+                    },
+                    closeBoxMargin: "12px 4px 2px 2px",
 
-	            });
+                });
 
-	            photoInfoBox.open(map, photoMarker);
-	        });
-		}
+                photoInfoBox.open(map, photoMarker);
+            });
+        }
 
     }
 
     //otherwise geocode the title
     /*else
-	{
-		var address = item.title;
-		geocoder.geocode( { 'address': address + ', Australia'}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-			  //map.setCenter(results[0].geometry.location);
-			  var photoMarker = new google.maps.Marker({
-				  map: map,
-				  position: results[0].geometry.location,
-				  title: item.title
-			  });
+    {
+        var address = item.title;
+        geocoder.geocode( { 'address': address + ', Australia'}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+              //map.setCenter(results[0].geometry.location);
+              var photoMarker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location,
+                  title: item.title
+              });
 
-			 var photoInfo = new google.maps.InfoWindow( {
-				content: "<a href='" + item.troveUrl + "'>" + item.title + "</a>"
-			});
+             var photoInfo = new google.maps.InfoWindow( {
+                content: "<a href='" + item.troveUrl + "'>" + item.title + "</a>"
+            });
 
-			google.maps.event.addListener(photoMarker, 'click', function() {
-				photoInfo.open(map,photoMarker);
-			});
+            google.maps.event.addListener(photoMarker, 'click', function() {
+                photoInfo.open(map,photoMarker);
+            });
 
 
 
-			} else {
-			  alert('Geocode was not successful for the following reason: ' + status);
-			}
+            } else {
+              alert('Geocode was not successful for the following reason: ' + status);
+            }
 
-		});
-	}*/
+        });
+    }*/
 }
 
         </script>
@@ -251,9 +266,10 @@ function getPictureInfo(index, item) {
     <body>
         <div class="container">
             <div id="header">
-                	<h1>Brisbane Floods - A Timeline</h1>
+                    <h1>Brisbane Floods - A Timeline</h1>
 
             </div>
+            <div id="searchinput">
                 <div id="timeline">
                     <!-- <form action="#" id="searchTrove" role="form"> -->
                     <!--<input id="searchTerm" type="text">
@@ -269,6 +285,22 @@ function getPictureInfo(index, item) {
                     </map>
                 </div>
 
+                <div id="manualsearch" class="img-center">
+                    <div id="yearfilter">
+                        Filter by date
+                        <input id="tb_minYear" class="yearbox" type="text">
+                        -
+                        <input id="tb_maxYear" class="yearbox" type="text">
+                        <button id="bt_yearButton" onclick=PerformSearch(-2)>Search</button>
+                    </div>
+                    <div id="areafilter">
+                        Search for area
+                        <input id="tb_area" type="text">
+                        <button id="bt_areaButton" onclick=PerformSearch(-3)>Search</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="leftside">
                 <div id="articles"></div>
             </div>
@@ -276,7 +308,7 @@ function getPictureInfo(index, item) {
                 <div id="map_canvas"></div>
             </div>
             <div id="footer">
-				<!-- Powered by Trove -->
+                <!-- Powered by Trove -->
                 <a href="http://trove.nla.gov.au/" target="_blank" class="fl-right"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
             </div>
         </div>
