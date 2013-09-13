@@ -7,13 +7,283 @@
         <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script>
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-        <script type='text/javascript' src='js/search.js'></script>
+        <!--<script type='text/javascript' src='js/search.js'></script>
+        debugging is a nightmare, because chrome doesn't properly reload external js file-->
         <link rel="stylesheet" type="text/css" href="base.css">
         <!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css"> -->
         <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
         <style type='text/css'>
             @import url('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
         </style>
+
+<script type="text/javascript">
+    
+//global vars 
+var apiKey = "71lcag6a17k5r6a7";          
+var map;
+var geocoder;
+var photoInfoBox;
+var searchDate = 0;
+
+//map marker management - global
+google.maps.Map.prototype.markers = new Array();
+
+google.maps.Map.prototype.getMarkers = function () {
+    return this.markers
+};
+
+google.maps.Map.prototype.clearMarkers = function () {
+    for (var i = 0; i < this.markers.length; i++) {
+        this.markers[i].setMap(null);
+    }
+    this.markers = new Array();
+};
+
+google.maps.Marker.prototype._setMap = google.maps.Marker.prototype.setMap;
+
+google.maps.Marker.prototype.setMap = function (map) {
+    if (map) {
+        map.markers[map.markers.length] = this;
+    }
+    this._setMap(map);
+}
+
+
+$(window).load(function () {
+
+    //Start google map
+    geocoder = new google.maps.Geocoder();
+
+    var latlng = new google.maps.LatLng(-27.471011, 153.023449);
+    var settings = {
+        zoom: 12,
+        center: latlng,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        navigationControl: true,
+        navigationControlOptions: {
+            style: google.maps.NavigationControlStyle.SMALL
+        },
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map = new google.maps.Map(document.getElementById("map_canvas"), settings);
+
+
+    // action that occurs when the 'Search' button is clicked
+    //$("#searchbtn").bind("click", function() {
+});
+
+
+function PerformSearch(searchValue) {
+
+    //if input is -3, use previous year to perform area search
+    if (searchValue != -3)
+        searchDate = searchValue;
+
+
+    //var searchTerm = $("#searchTerm").val();
+    var searchTerm = "brisbane floods";
+    var sortBy = "relevance";
+
+    if (searchValue == -3)
+        searchTerm += " " + $('#tb_area').val();
+
+    //If searchDate is -2, a manual search is performed, so get values from textboxes
+    var minYear, maxYear;
+    if (searchDate != -2) {
+        minYear = searchDate - 1;
+        maxYear = searchDate + 2;
+    } else {
+        minYear = $('#tb_minYear').val();
+        maxYear = $('#tb_maxYear').val();
+    }
+
+    searchArticles(searchTerm, minYear, maxYear);
+    searchPictures(searchTerm, minYear, maxYear);
+
+}
+
+
+function searchArticles(searchTerm, minYear, maxYear) {
+
+    //Perform article search
+
+    var searchZone = "newspaper";
+
+    var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" 
+        + searchZone + "&sortby=relevance&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&callback=?";
+
+    //Clear articles div
+    $('#articles').empty();
+
+    //Query Trove, process each article returned
+    $.getJSON(articleURL, function (data) {
+
+        if (data.response.zone[0].records.article) {
+            $.each(data.response.zone[0].records.article, processArticle);
+        }
+    });
+}
+
+
+function searchPictures(searchTerm, minYear, maxYear) {
+
+    //Perform picture search
+
+    var searchZone = "picture";
+    var maxPictures = 100;
+
+    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" 
+        + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&callback=?";
+
+    //remove existing markers and close infobox
+    map.clearMarkers();
+    if (photoInfoBox) photoInfoBox.close();
+
+    //Query Trove, process each picture returned
+    $.getJSON(pictureURL, function (data) {
+
+        if (data.response.zone[0].records.work) {
+            $.each(data.response.zone[0].records.work, processPicture);
+        }
+    });
+}
+
+
+function processArticle(index, item) {
+
+    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='"
+        + item.troveUrl + "' target='_blank'>" + item.title.value 
+        + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
+
+    $('#articles').append(text);
+}
+
+function processPicture(index, item) {
+
+    //First get the location, then define infobox content and place marker
+
+    //Try to get lat/long coords from location tag
+    if (typeof item.version[0].record[0] === 'object') {
+        if (typeof item.version[0].record[0].metadata === 'object') {
+            if (typeof item.version[0].record[0].metadata.dc === 'object') {
+                if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
+                    var loc = item.version[0].record[0].metadata.dc.coverage;
+                }
+            }
+        }
+    }
+
+    //If location tag exists
+    if (typeof loc !== 'undefined') {
+
+        //check if it contains lat/long
+        var point = loc.match(/-?\d+\.\d+/g);
+
+        if (typeof point !== 'undefined') {
+
+            var lat = parseFloat(point[0]);
+            var lng = parseFloat(point[1]);
+
+            var markerPos = new google.maps.LatLng(lat, lng);
+
+            //Successful in finding lat/long, so place a marker
+            placeMarker(markerPos, item.title, setInfoBoxContent(item, loc));
+            return;
+        }
+    }
+
+    //If not successful in getting lat/long, geocode the picture's title
+    //codeAddress(item);
+    console.log("geocoding");
+    
+}
+
+function codeAddress(item) {
+    
+    geocoder.geocode( { 'address': item.title + ', Australia'}, function(results, status) {
+        
+        if (status == google.maps.GeocoderStatus.OK) {
+            
+            //map.setCenter(results[0].geometry.location);
+            var loc = results[0].geometry.location;
+            placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
+            
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+        }
+
+    });
+}
+
+function setInfoBoxContent(item, loc) {
+
+    //Set the marker infobox content
+
+    //check if thumbnail exists, and if so get URL
+    var thumburl;
+    for (var i = 0; i < item.identifier.length; i++) {
+        if (typeof item.identifier[i].linktype === 'string') {
+            if (item.identifier[i].linktype == 'thumbnail') {
+                thumburl = item.identifier[i].value;
+            }
+        }
+    }
+
+    //photo description
+    var snippet = "";
+    if (typeof item.snippet === 'string') snippet = item.snippet;
+
+    //infobox HTML
+    var info = "<div class='mapinfobox'><p><a href='" + item.identifier[0].value 
+        + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" 
+        + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" 
+        + loc.replace(/-?\d+\.\d+/g, '').slice(0,-3) + "<br /></p><p>" + snippet + "</p></div>";
+
+    return info;
+}
+
+function placeMarker(markerPos, title, info) {
+
+    //Place a marker on the map after location has been determined
+
+    //Create marker
+    var marker = new google.maps.Marker({
+        position: markerPos,
+        map: map,
+        title: title
+    });
+
+    //Set up the infobox
+    google.maps.event.addListener(marker, 'click', function () {
+
+        //close existing infobox
+        if (photoInfoBox) photoInfoBox.close();
+
+        //create the infobox
+        photoInfoBox = new InfoBox({
+            content: info,
+            maxWidth: 150,
+            pixelOffset: new google.maps.Size(-140, 0),
+            zIndex: null,
+            boxStyle: {
+                background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
+                opacity: 0.95
+            },
+            closeBoxMargin: "12px 4px 2px 2px",
+        });
+
+        photoInfoBox.open(map, marker);
+    });
+}
+
+
+</script>
+
+
     </head>
     
     <body>
