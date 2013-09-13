@@ -51,6 +51,14 @@ google.maps.Marker.prototype.setMap = function (map) {
 
 $(window).load(function () {
 
+    //Set up functions to call when buttons and timeline is clicked
+    //Timeline
+    $("#tm1893").on("click", function() { PerformSearch(1893); return false; });
+    $("#tm1931").on("click", function() { PerformSearch(1931); return false; });
+    $("#tm1974").on("click", function() { PerformSearch(1974); return false; });
+    $("#tm2011").on("click", function() { PerformSearch(2011); return false; });
+    $("#tm2013").on("click", function() { PerformSearch(2013); return false; });
+
     //Start google map
     geocoder = new google.maps.Geocoder();
 
@@ -162,6 +170,7 @@ function processArticle(index, item) {
     $('#articles').append(text);
 }
 
+
 function processPicture(index, item) {
 
     //First get the location, then define infobox content and place marker
@@ -202,6 +211,7 @@ function processPicture(index, item) {
     
 }
 
+
 function codeAddress(item) {
     
     geocoder.geocode( { 'address': item.title + ', Australia'}, function(results, status) {
@@ -218,6 +228,7 @@ function codeAddress(item) {
 
     });
 }
+
 
 function setInfoBoxContent(item, loc) {
 
@@ -246,9 +257,10 @@ function setInfoBoxContent(item, loc) {
     return info;
 }
 
+
 function placeMarker(markerPos, title, info) {
 
-    //Place a marker on the map after location has been determined
+    //Place a marker on the map after location and content has been determined
 
     //Create marker
     var marker = new google.maps.Marker({
@@ -294,17 +306,13 @@ function placeMarker(markerPos, title, info) {
             </div>
             <div id="searchinput">
                 <div id="timeline">
-                    <!-- <form action="#" id="searchTrove" role="form"> -->
-                    <!--<input id="searchTerm" type="text">
-                <button class="btn" id="searchbtn">Search</button>-->
-                    <!-- </form> -->
                     <img class="img-center" src="img/timeline.jpg" alt="" usemap="#map1378997951168">
                     <map id="map1378997951168" name="map1378997951168">
-                        <area shape="rect" coords="109,27,156,72" title="1983" alt="1983" onclick=PerformSearch(1893) href="#" target="_self">
-                        <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" onclick=PerformSearch(1931) href="#" target="_self">
-                        <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" onclick=PerformSearch(1974) href="#" target="_self">
-                        <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" onclick=PerformSearch(2011) href="#" target="_self">
-                        <area shape="rect" coords="789,28,825,73" title="2013" alt="2013" onclick=PerformSearch(2013) href="#" target="_self">
+                        <area shape="rect" coords="109,27,156,72" title="1983" alt="1893" href="#" id="tm1893">
+                        <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
+                        <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
+                        <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
+                        <area shape="rect" coords="789,28,825,73" title="2013" alt="2013" href="#" id="tm2013">
                     </map>
                 </div>
 
