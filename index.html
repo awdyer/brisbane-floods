@@ -59,6 +59,12 @@ $(window).load(function () {
     $("#tm2011").on("click", function() { PerformSearch(2011); return false; });
     $("#tm2013").on("click", function() { PerformSearch(2013); return false; });
 
+    $("#f_toggle").on("click", function() { toggleDiv("#filters"); return false; });
+
+    //Hide advanced options
+    toggleDiv("#filters");
+
+
     //Start google map
     geocoder = new google.maps.Geocoder();
 
@@ -293,6 +299,11 @@ function placeMarker(markerPos, title, info) {
 }
 
 
+function toggleDiv(div) {
+    $(div).toggle();
+}
+
+
 </script>
 
 
@@ -316,19 +327,37 @@ function placeMarker(markerPos, title, info) {
                     </map>
                 </div>
 
-                <div id="manualsearch" class="img-center">
-                    <div id="yearfilter">
-                        Filter by date
-                        <input id="tb_minYear" class="yearbox" type="text">
-                        -
-                        <input id="tb_maxYear" class="yearbox" type="text">
-                        <button id="bt_yearButton" onclick=PerformSearch(-2)>Search</button>
+                <a id="f_toggle" href="#" alt="Advanced search">Advanced search</a>
+                <div id="filters" class="img-center">
+
+                    <div id="f_same">
+                        <input id="f_usesame" type="checkbox">Use the same filters for Articles and Photos
+                        <button id="f_submit">Search</button>
                     </div>
-                    <div id="areafilter">
-                        Search for area
-                        <input id="tb_area" type="text">
-                        <button id="bt_areaButton" onclick=PerformSearch(-3)>Search</button>
+                    
+                    <div id="f_labels">
+                        <ul>
+                            <li>Date range</li>
+                            <li>Suburb/place</li>
+                            <li>Additional keywords</li>
+                        </ul>
                     </div>
+                    <div id="f_articles">
+                        <p>Articles</p>
+                        <input id="fa_minYear" class="f_year" type="text"> to 
+                        <input id="fa_maxYear" class="f_year" type="text">
+                        <input id="fa_area" type="text">
+                        <input id="fa_keywords" type="text">
+                    </div>
+                    <div id="f_photos">
+                        <p>Photos</p>
+                        <input id="fp_minYear" class="f_year" type="text"> to 
+                        <input id="fp_maxYear" class="f_year" type="text">
+                        <input id="fp_area" type="text">
+                        <input id="fp_keywords" type="text">
+                    </div>
+                    
+
                 </div>
             </div>
 

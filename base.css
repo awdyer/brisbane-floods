@@ -21,20 +21,45 @@
     margin-bottom: 10px;
 }
 
-#manualsearch {
-    width: 65%;
-}
-
-#manualsearch .yearbox {
-    max-width: 50px;
-}
-
-#yearfilter {
+#searchinput a {
     float: left;
 }
 
-#areafilter {
-    float: right;
+#filters {
+    width: 65%;
+    padding: 5px 10px;
+    /*border: 1px solid blue;*/
+}
+
+#filters .f_year {
+    max-width: 60px;
+}
+
+#f_same {
+    float: left;
+    margin: 10px;
+    width: 100%;
+    /*border: 1px solid red;*/
+}
+
+#f_labels li {
+    line-height: 1.5em;
+    vertical-align: middle;
+}
+
+#f_labels, #f_articles, #f_photos {
+    width: 20%;
+    /*margin: 0px 50px;*/
+    padding: 0px 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    float: left;
+    /*border: 1px solid blue;*/
+}
+
+ul {
+    list-style-type: none;
 }
 
 #leftside {
