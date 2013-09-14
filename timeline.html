@@ -241,11 +241,10 @@ function processPicture(index, item) {
     }
 
     //If not successful in getting lat/long, geocode the picture's title
-    //codeAddress(item);
+    //Can't do too many queries per second
     geocoder_wait += geocode_delay;
     setTimeout(function() { codeAddress(item); }, geocoder_wait);
-    //console.log("geocoding");
-    
+
 }
 
 
