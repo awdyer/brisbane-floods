@@ -21,11 +21,13 @@
     
 //global vars 
 var apiKey = "71lcag6a17k5r6a7";          
-var map, geocoder;
+var map, geocoder, geocoder_wait;
+var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
+var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
 var photoInfoBox;
 var prevSearchTerm, prevMinYear, prevMaxYear, prevPageA, prevPageP;
 
-var loadedPics, loadedArts;
+var loadedPics, loadedArts, codedPics;
 
 //map marker management - global
 google.maps.Map.prototype.markers = new Array();
@@ -66,7 +68,7 @@ $(window).load(function () {
     $("#p_load").on("click", function() { searchPictures(prevSearchTerm, prevMinYear, prevMaxYear); return false; });
 
     //Hide advanced options
-    toggleDiv(" ");
+    toggleDiv("#filters");
 
 
     //Start google map
@@ -127,9 +129,11 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     prevMaxYear = maxYear;
     prevPageA = 0;
     prevPageP = 0;
+    geocoder_wait = 0;
 
     loadedArts = 0;
     loadedPics = 0;
+    codedPics = 0;
 
     //clear existing results
     $('#articles').empty();
@@ -238,26 +242,66 @@ function processPicture(index, item) {
 
     //If not successful in getting lat/long, geocode the picture's title
     //codeAddress(item);
-    console.log("geocoding");
+    geocoder_wait += geocode_delay;
+    setTimeout(function() { codeAddress(item); }, geocoder_wait);
+    //console.log("geocoding");
     
 }
 
 
-function codeAddress(item) {
+function codeAddress(item) { 
     
-    geocoder.geocode( { 'address': item.title + ', Australia'}, function(results, status) {
-        
-        if (status == google.maps.GeocoderStatus.OK) {
-            
-            //map.setCenter(results[0].geometry.location);
-            var loc = results[0].geometry.location;
-            placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
-            
-        } else {
-          alert('Geocode was not successful for the following reason: ' + status);
-        }
+    //Get address from item info, filter out common words
+    var address = item.title + " " + item.snippet;
+    address = filterWords(address) + ", Brisbane, Australia";
+    console.log(address);
 
-    });
+    //perform geocode
+    if (geocode_enabled) {
+        geocoder.geocode( { 'address': address }, function(results, status) {
+            
+            if (status == google.maps.GeocoderStatus.OK) {
+                
+                //map.setCenter(results[0].geometry.location);
+                var loc = results[0].geometry.location;
+                placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
+
+                codedPics ++;
+                console.log("geopics: " + codedPics);
+                
+            } else {
+              console.log('Geocode was not successful for the following reason: ' + status);
+            }
+
+        });
+    }
+}
+
+
+function filterWords(text) {
+
+    //Filters words from a string, using the wordlist below
+
+    var common = "the it is we all a an and by to you me he she they we how it i are to for of in was at from floods flood during natural disaster disasters 1983 1931 1974 2011 2013 b undefined home photograph photo had clean up taken s on";
+
+    var wordArr = text.match(/\w+/g),
+        commonObj = {},
+        uncommonArr = [],
+        word, i;
+    
+    common = common.split(' ');
+    for ( i = 0; i < common.length; i++ ) {
+        commonObj[ common[i].trim() ] = true;
+    }
+    
+    for ( i = 0; i < wordArr.length; i++ ) {
+        word = wordArr[i].trim().toLowerCase();
+        if ( !commonObj[word] ) {
+            uncommonArr.push(word);
+        }
+    }
+    
+    return uncommonArr.join(' ');
 }
 
 
@@ -266,11 +310,13 @@ function setInfoBoxContent(item, loc) {
     //Set the marker infobox content
 
     //check if thumbnail exists, and if so get URL
-    var thumburl;
-    for (var i = 0; i < item.identifier.length; i++) {
-        if (typeof item.identifier[i].linktype === 'string') {
-            if (item.identifier[i].linktype == 'thumbnail') {
-                thumburl = item.identifier[i].value;
+    var thumburl = "";
+    if (typeof item.identifier !== 'undefined') {
+        for (var i = 0; i < item.identifier.length; i++) {
+            if (typeof item.identifier[i].linktype === 'string') {
+                if (item.identifier[i].linktype == 'thumbnail') {
+                    thumburl = item.identifier[i].value;
+                }
             }
         }
     }
