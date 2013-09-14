@@ -18,9 +18,9 @@
         </style>
 
 <script type="text/javascript">
-    
+
 //global vars 
-var apiKey = "71lcag6a17k5r6a7";          
+var apiKey = "71lcag6a17k5r6a7";
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
 var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
@@ -33,11 +33,12 @@ var loadedPics, loadedArts, codedPics;
 google.maps.Map.prototype.markers = new Array();
 
 google.maps.Map.prototype.getMarkers = function () {
-    return this.markers
+    return this.markers;
 };
 
 google.maps.Map.prototype.clearMarkers = function () {
-    for (var i = 0; i < this.markers.length; i++) {
+    var i;
+    for (i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
     }
     this.markers = new Array();
@@ -57,15 +58,39 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function() { newSearch(1893); return false; });
-    $("#tm1931").on("click", function() { newSearch(1931); return false; });
-    $("#tm1974").on("click", function() { newSearch(1974); return false; });
-    $("#tm2011").on("click", function() { newSearch(2011); return false; });
-    $("#tm2013").on("click", function() { newSearch(2013); return false; });
+    $("#tm1893").on("click", function () {
+        newSearch(1893);
+        return false;
+    });
+    $("#tm1931").on("click", function () {
+        newSearch(1931);
+        return false;
+    });
+    $("#tm1974").on("click", function () {
+        newSearch(1974);
+        return false;
+    });
+    $("#tm2011").on("click", function () {
+        newSearch(2011);
+        return false;
+    });
+    $("#tm2013").on("click", function () {
+        newSearch(2013);
+        return false;
+    });
 
-    $("#f_toggle").on("click", function() { toggleDiv("#filters"); return false; });
-    $("#a_load").on("click", function() { searchArticles(prevSearchTerm, prevMinYear, prevMaxYear); return false; });
-    $("#p_load").on("click", function() { searchPictures(prevSearchTerm, prevMinYear, prevMaxYear); return false; });
+    $("#f_toggle").on("click", function () {
+        toggleDiv("#filters");
+        return false;
+    });
+    $("#a_load").on("click", function () {
+        searchArticles(prevSearchTerm, prevMinYear, prevMaxYear);
+        return false;
+    });
+    $("#p_load").on("click", function () {
+        searchPictures(prevSearchTerm, prevMinYear, prevMaxYear);
+        return false;
+    });
 
     //Hide advanced options
     toggleDiv("#filters");
@@ -94,15 +119,15 @@ $(window).load(function () {
 
     //If came from startpage, automatically search that year
     var store = new Persist.Store('timeline_year');
-    store.get('year_key', function(ok, val) {
-      if (ok) {
-        console.log('year_key = ' + val);
+    store.get('year_key', function (ok, val) {
+        if (ok) {
+            console.log('year_key = ' + val);
 
-        if (val != "") {
-            newSearch(val); 
-            store.set('year_key', "");  
+            if (val != "") {
+                newSearch(val);
+                store.set('year_key', "");
+            }
         }
-      }
     });
 
 });
@@ -153,8 +178,7 @@ function searchArticles(searchTerm, minYear, maxYear) {
     var searchZone = "newspaper";
     var maxArticles = 30;
 
-    var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" 
-        + searchZone + "&sortby=relevance&n=" + maxArticles + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
+    var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxArticles + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
 
     prevPageA += maxArticles;
 
@@ -171,12 +195,12 @@ function searchArticles(searchTerm, minYear, maxYear) {
 function searchPictures(searchTerm, minYear, maxYear) {
 
     //Perform picture search
+    if (!geocode_enabled) console.log("geocode disabled");
 
     var searchZone = "picture";
     var maxPictures = 100;
 
-    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" 
-        + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";    
+    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";
 
     prevPageP += maxPictures;
 
@@ -192,13 +216,11 @@ function searchPictures(searchTerm, minYear, maxYear) {
 
 function processArticle(index, item) {
 
-    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='"
-        + item.troveUrl + "' target='_blank'>" + item.title.value 
-        + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
+    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='" + item.troveUrl + "' target='_blank'>" + item.title.value + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
 
     $('#articles').append(text);
 
-    loadedArts ++;
+    loadedArts++;
     console.log("arts: " + loadedArts);
 }
 
@@ -224,7 +246,8 @@ function processPicture(index, item) {
         //check if it contains lat/long
         var point = loc.match(/-?\d+\.\d+/g);
 
-        if (typeof point !== 'undefined') {
+        //both these tests shouldnt be needed, this is a kludge for some bug
+        if (typeof point !== 'undefined' && point != null) {
 
             var lat = parseFloat(point[0]);
             var lng = parseFloat(point[1]);
@@ -234,7 +257,7 @@ function processPicture(index, item) {
             //Successful in finding lat/long, so place a marker
             placeMarker(markerPos, item.title, setInfoBoxContent(item, loc));
 
-            loadedPics ++;
+            loadedPics++;
             console.log("pics: " + loadedPics);
             return;
         }
@@ -243,33 +266,37 @@ function processPicture(index, item) {
     //If not successful in getting lat/long, geocode the picture's title
     //Can't do too many queries per second
     geocoder_wait += geocode_delay;
-    setTimeout(function() { codeAddress(item); }, geocoder_wait);
+    setTimeout(function () {
+        codeAddress(item);
+    }, geocoder_wait);
 
 }
 
 
-function codeAddress(item) { 
-    
+function codeAddress(item) {
+
     //Get address from item info, filter out common words
     var address = item.title + " " + item.snippet;
     address = filterWords(address) + ", Brisbane, Australia";
-    console.log(address);
+    //console.log(address);
 
     //perform geocode
     if (geocode_enabled) {
-        geocoder.geocode( { 'address': address }, function(results, status) {
-            
+        geocoder.geocode({
+            'address': address
+        }, function (results, status) {
+
             if (status == google.maps.GeocoderStatus.OK) {
-                
+
                 //map.setCenter(results[0].geometry.location);
                 var loc = results[0].geometry.location;
                 placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
 
-                codedPics ++;
+                codedPics++;
                 console.log("geopics: " + codedPics);
-                
+
             } else {
-              console.log('Geocode was not successful for the following reason: ' + status);
+                console.log('Geocode unsuccessful: ' + status);
             }
 
         });
@@ -281,25 +308,25 @@ function filterWords(text) {
 
     //Filters words from a string, using the wordlist below
 
-    var common = "the it is we all a an and by to you me he she they we how it i are to for of in was at from floods flood during natural disaster disasters 1983 1931 1974 2011 2013 b undefined home photograph photo had clean up taken s on";
+    var common = "the it is we all a an and by to you me he she they we how it i are to for of in was at from floods flood during natural disaster disasters 1983 1931 1974 2011 2013 b undefined home photograph photo had clean up taken s on january february";
 
     var wordArr = text.match(/\w+/g),
         commonObj = {},
         uncommonArr = [],
         word, i;
-    
+
     common = common.split(' ');
-    for ( i = 0; i < common.length; i++ ) {
-        commonObj[ common[i].trim() ] = true;
+    for (i = 0; i < common.length; i++) {
+        commonObj[common[i].trim()] = true;
     }
-    
-    for ( i = 0; i < wordArr.length; i++ ) {
+
+    for (i = 0; i < wordArr.length; i++) {
         word = wordArr[i].trim().toLowerCase();
-        if ( !commonObj[word] ) {
+        if (!commonObj[word]) {
             uncommonArr.push(word);
         }
     }
-    
+
     return uncommonArr.join(' ');
 }
 
@@ -311,7 +338,8 @@ function setInfoBoxContent(item, loc) {
     //check if thumbnail exists, and if so get URL
     var thumburl = "";
     if (typeof item.identifier !== 'undefined') {
-        for (var i = 0; i < item.identifier.length; i++) {
+        var i;
+        for (i = 0; i < item.identifier.length; i++) {
             if (typeof item.identifier[i].linktype === 'string') {
                 if (item.identifier[i].linktype == 'thumbnail') {
                     thumburl = item.identifier[i].value;
@@ -325,10 +353,7 @@ function setInfoBoxContent(item, loc) {
     if (typeof item.snippet === 'string') snippet = item.snippet;
 
     //infobox HTML
-    var info = "<div class='mapinfobox'><p><a href='" + item.identifier[0].value 
-        + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" 
-        + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" 
-        + loc.replace(/-?\d+\.\d+/g, '').slice(0,-3) + "<br /></p><p>" + snippet + "</p></div>";
+    var info = "<div class='mapinfobox'><p><a href='" + item.identifier[0].value + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" + loc.replace(/-?\d+\.\d+/g, '').slice(0, -3) + "<br /></p><p>" + snippet + "</p></div>";
 
     return info;
 }
@@ -373,7 +398,6 @@ function toggleDiv(div) {
     $(div).toggle();
 }
 
-
 </script>
 
 
@@ -389,7 +413,7 @@ function toggleDiv(div) {
                 <div id="timeline">
                     <img class="img-center" src="img/timeline.jpg" alt="" usemap="#map1378997951168">
                     <map id="map1378997951168" name="map1378997951168">
-                        <area shape="rect" coords="109,27,156,72" title="1983" alt="1893" href="#" id="tm1893">
+                        <area shape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
                         <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
                         <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
                         <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
@@ -409,6 +433,7 @@ function toggleDiv(div) {
                         <ul>
                             <li>Date range</li>
                             <li>Suburb/place</li>
+                            <li>Max results</li>
                             <li>Additional keywords</li>
                         </ul>
                     </div>
@@ -417,6 +442,7 @@ function toggleDiv(div) {
                         <input id="fa_minYear" class="f_year" type="text"> to 
                         <input id="fa_maxYear" class="f_year" type="text">
                         <input id="fa_area" type="text">
+                        <input id="fa_max" type="text">
                         <input id="fa_keywords" type="text">
                     </div>
                     <div id="f_photos">
@@ -424,7 +450,7 @@ function toggleDiv(div) {
                         <input id="fp_minYear" class="f_year" type="text"> to 
                         <input id="fp_maxYear" class="f_year" type="text">
                         <input id="fp_area" type="text">
-                        <input id="fp_keywords" type="text">
+                        <input id="fp_max" type="text">
                     </div>
 
                 </div>
