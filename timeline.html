@@ -21,11 +21,12 @@
 
 //global vars 
 var apiKey = "71lcag6a17k5r6a7";
-var map, geocoder, geocoder_wait;
+var map, geocoder, geocoder_wait, photoInfoBox;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
 var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
-var photoInfoBox;
-var prevSearchTerm, prevMinYear, prevMaxYear, prevPageA, prevPageP;
+var prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA, prevPageA = 0;
+var prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP, prevPageP = 0;
+var fUseSame = false;
 
 var loadedPics, loadedArts, codedPics;
 
@@ -58,38 +59,36 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function () {
-        newSearch(1893);
-        return false;
-    });
-    $("#tm1931").on("click", function () {
-        newSearch(1931);
-        return false;
-    });
-    $("#tm1974").on("click", function () {
-        newSearch(1974);
-        return false;
-    });
-    $("#tm2011").on("click", function () {
-        newSearch(2011);
-        return false;
-    });
-    $("#tm2013").on("click", function () {
-        newSearch(2013);
-        return false;
+    $("#tm1893").on("click", function () { newSearch(1893); return false; });
+    $("#tm1931").on("click", function () { newSearch(1931); return false; });
+    $("#tm1974").on("click", function () { newSearch(1974); return false; });
+    $("#tm2011").on("click", function () { newSearch(2011); return false; });
+    $("#tm2013").on("click", function () { newSearch(2013); return false; });
+
+    $("#f_submit").on("click", function () { 
+        newSearch(-2);
+        return false; 
     });
 
-    $("#f_toggle").on("click", function () {
-        toggleDiv("#filters");
-        return false;
-    });
-    $("#a_load").on("click", function () {
-        searchArticles(prevSearchTerm, prevMinYear, prevMaxYear);
-        return false;
-    });
-    $("#p_load").on("click", function () {
-        searchPictures(prevSearchTerm, prevMinYear, prevMaxYear);
-        return false;
+    $("#f_toggle").on("click", function () { toggleDiv("#filters"); return false; });
+    $("#a_load").on("click", function () { 
+        searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); return false; });
+    $("#p_load").on("click", function () { 
+        searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); return false; });
+
+    $("#f_usesame").on("click", function() { 
+        fUseSame = !fUseSame;
+        $("#fp_area").prop('disabled', fUseSame);
+        $("#fp_minYear").prop('disabled', fUseSame);
+        $("#fp_maxYear").prop('disabled', fUseSame);
+        $("#fp_max").prop('disabled', fUseSame);
+
+        if (fUseSame) {
+            $("#fa_label").html("Articles/Photos");
+            $("#fp_label").html("&nbsp;");
+        } else {
+            $("#fp_label").html("Photos");
+        }
     });
 
     //Hide advanced options
@@ -135,25 +134,83 @@ $(window).load(function () {
 
 function newSearch(searchYear, searchTerm, minYear, maxYear) {
 
-    //Only searchTerm is required
+    //Only searchYear is required
 
     //Do a new search, clear existing results
 
     //default value for searchTerm is "brisbane floods"
-    searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods" + searchTerm;
+    searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods " + searchTerm;
 
     //if searchYear is -2, minYear and maxYear have manually been passed
     if (searchYear != -2) {
-        minYear = searchYear - 1; //give some leeway for years
-        maxYear = searchYear + 2;
+
+        var searchTermA = "brisbane floods";
+        var minYearA = searchYear - 1;
+        var maxYearA = searchYear + 2;
+        var maxResultsA = 30;
+
+        var searchTermP = "brisbane floods";
+        var minYearP = searchYear - 1;
+        var maxYearP = searchYear + 2;
+        var maxResultsP = 100;
+    }
+    else {
+        //Get article filters
+        var searchTermA = "brisbane floods " + $("#fa_area").val() + " " + $("#fa_keywords").val();
+        if ($("#fa_exclude").val() != "")
+            searchTermA += " NOT " + $("#fa_exclude").val();
+
+        var minYearA = $("#fa_minYear").val();
+        if (minYearA == "")
+            minYearA = "1000";
+        
+        var maxYearA = $("#fa_maxYear").val();
+        if (maxYearA == "")
+            maxYearA = "3000";
+        
+        var maxResultsA = $("#fa_max").val();
+        if (maxResultsA == "")
+            maxResultsA = "30";
+
+        //Get picture filters
+        if (!fUseSame) {
+            var searchTermP = "brisbane floods " + $("#fp_area").val();
+
+            var minYearP = $("#fp_minYear").val();
+            if (minYearP == "")
+                minYearP = "1000";
+            
+            var maxYearP = $("#fp_maxYear").val();
+            if (maxYearP == "")
+                maxYearP = "3000";
+            
+            var maxResultsP = $("#fp_max").val();
+            if (maxResultsP == "")
+                maxResultsP = "100";
+            //note maxResultsP may not actually return this number of images due to geocoding issues
+        } else {
+            var searchTermP = searchTermA;
+            var minYearP = minYearA;
+            var maxYearP = maxYearA;
+            var maxResultsP = maxResultsA;
+        }
     }
 
-    //set history
-    prevSearchTerm = searchTerm;
-    prevMinYear = minYear;
-    prevMaxYear = maxYear;
+    //set history for 'load more'
+    prevSearchTermA = searchTermA;
+    prevSearchTermP = searchTermP;
+    prevMinYearA = minYearA;
+    prevMaxYearA = maxYearA;
+    prevMinYearP = minYearP;
+    prevMaxYearP = maxYearP;
+    prevMaxResultsA = maxResultsA;
+    prevMaxResultsP = maxResultsP;
+
+
     prevPageA = 0;
     prevPageP = 0;
+    
+    //reset geocoder wait time
     geocoder_wait = 0;
 
     loadedArts = 0;
@@ -166,21 +223,20 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     if (photoInfoBox) photoInfoBox.close();
 
     //search
-    searchArticles(searchTerm, minYear, maxYear);
-    searchPictures(searchTerm, minYear, maxYear);
+    searchArticles(searchTermA, minYearA, maxYearA, maxResultsA);
+    searchPictures(searchTermP, minYearP, maxYearP, maxResultsP);
 }
 
 
-function searchArticles(searchTerm, minYear, maxYear) {
+function searchArticles(searchTerm, minYear, maxYear, maxResults) {
 
     //Perform article search
 
     var searchZone = "newspaper";
-    var maxArticles = 30;
 
-    var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxArticles + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
+    var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
 
-    prevPageA += maxArticles;
+    prevPageA += maxResults;
 
     //Query Trove, process each article returned
     $.getJSON(articleURL, function (data) {
@@ -192,17 +248,16 @@ function searchArticles(searchTerm, minYear, maxYear) {
 }
 
 
-function searchPictures(searchTerm, minYear, maxYear) {
+function searchPictures(searchTerm, minYear, maxYear, maxResults) {
 
     //Perform picture search
     if (!geocode_enabled) console.log("geocode disabled");
 
     var searchZone = "picture";
-    var maxPictures = 100;
 
-    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxPictures + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";
+    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";
 
-    prevPageP += maxPictures;
+    prevPageP += maxResults;
 
     //Query Trove, process each picture returned
     $.getJSON(pictureURL, function (data) {
@@ -265,10 +320,12 @@ function processPicture(index, item) {
 
     //If not successful in getting lat/long, geocode the picture's title
     //Can't do too many queries per second
-    geocoder_wait += geocode_delay;
-    setTimeout(function () {
-        codeAddress(item);
-    }, geocoder_wait);
+    if (geocode_enabled) {
+        geocoder_wait += geocode_delay;
+        setTimeout(function () {
+            codeAddress(item);
+        }, geocoder_wait);
+    }
 
 }
 
@@ -278,29 +335,27 @@ function codeAddress(item) {
     //Get address from item info, filter out common words
     var address = item.title + " " + item.snippet;
     address = filterWords(address) + ", Brisbane, Australia";
-    //console.log(address);
+    console.log(address);
 
     //perform geocode
-    if (geocode_enabled) {
-        geocoder.geocode({
-            'address': address
-        }, function (results, status) {
+    geocoder.geocode( {
+        'address': address
+    }, function (results, status) {
 
-            if (status == google.maps.GeocoderStatus.OK) {
+        if (status == google.maps.GeocoderStatus.OK) {
 
-                //map.setCenter(results[0].geometry.location);
-                var loc = results[0].geometry.location;
-                placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
+            //map.setCenter(results[0].geometry.location);
+            var loc = results[0].geometry.location;
+            placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
 
-                codedPics++;
-                console.log("geopics: " + codedPics);
+            codedPics++;
+            console.log("geopics: " + codedPics);
 
-            } else {
-                console.log('Geocode unsuccessful: ' + status);
-            }
+        } else {
+            console.log('Geocode unsuccessful: ' + status);
+        }
 
-        });
-    }
+    });
 }
 
 
@@ -342,7 +397,7 @@ function setInfoBoxContent(item, loc) {
         for (i = 0; i < item.identifier.length; i++) {
             if (typeof item.identifier[i].linktype === 'string') {
                 if (item.identifier[i].linktype == 'thumbnail') {
-                    thumburl = item.identifier[i].value;
+                    thumburl = item.identifier[1].value;
                 }
             }
         }
@@ -438,15 +493,16 @@ function toggleDiv(div) {
                         </ul>
                     </div>
                     <div id="f_articles">
-                        <p>Articles</p>
+                        <p><span id="fa_label">Articles</span></p>
                         <input id="fa_minYear" class="f_year" type="text"> to 
                         <input id="fa_maxYear" class="f_year" type="text">
                         <input id="fa_area" type="text">
                         <input id="fa_max" type="text">
                         <input id="fa_keywords" type="text">
+                        <input id="fa_exclude" type="text">
                     </div>
                     <div id="f_photos">
-                        <p>Photos</p>
+                        <p><span id="fp_label">Photos</span></p>
                         <input id="fp_minYear" class="f_year" type="text"> to 
                         <input id="fp_maxYear" class="f_year" type="text">
                         <input id="fp_area" type="text">
@@ -469,6 +525,7 @@ function toggleDiv(div) {
                 <a href="http://trove.nla.gov.au/" target="_blank" class="fl-right"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
             </div>
         </div>
+
     </body>
 
 </html>
