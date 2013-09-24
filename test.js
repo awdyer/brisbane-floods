@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html>
 
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <title>Brisbane Floods - A Timeline</title>
-        <link href="jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
-
-        <!-- <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script> -->
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-        <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-        <script type='text/javascript' src='js/persist-min.js'></script>
-        <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
-        <script src="jquery.mCustomScrollbar.concat.min.js"></script>
-        <!--<script type='text/javascript' src='js/search.js'></script>
-        debugging is a nightmare, because chrome doesn't properly reload external js file-->
-        <link rel="stylesheet" type="text/css" href="base.css">
-        <!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css"> -->
-        <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
-        <style type='text/css'>
-            @import url('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
-        </style>
-
-<script type="text/javascript">
-
-//global vars
+//global vars 
 var apiKey = "71lcag6a17k5r6a7";
 var map, geocoder, geocoder_wait, photoInfoBox;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -69,18 +45,18 @@ $(window).load(function () {
     $("#tm2011").on("click", function () { newSearch(2011); return false; });
     $("#tm2013").on("click", function () { newSearch(2013); return false; });
 
-    $("#f_submit").on("click", function () {
+    $("#f_submit").on("click", function () { 
         newSearch(-2);
-        return false;
+        return false; 
     });
 
     $("#f_toggle").on("click", function () { toggleDiv("#filters"); return false; });
-    $("#a_load").on("click", function () {
+    $("#a_load").on("click", function () { 
         searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); return false; });
-    $("#p_load").on("click", function () {
+    $("#p_load").on("click", function () { 
         searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); return false; });
 
-    $("#f_usesame").on("click", function() {
+    $("#f_usesame").on("click", function() { 
         fUseSame = !fUseSame;
         $("#fp_area").prop('disabled', fUseSame);
         $("#fp_minYear").prop('disabled', fUseSame);
@@ -175,11 +151,11 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
         var minYearA = $("#fa_minYear").val();
         if (minYearA == "")
             minYearA = "1000";
-
+        
         var maxYearA = $("#fa_maxYear").val();
         if (maxYearA == "")
             maxYearA = "3000";
-
+        
         var maxResultsA = $("#fa_max").val();
         if (maxResultsA == "")
             maxResultsA = "30";
@@ -191,11 +167,11 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
             var minYearP = $("#fp_minYear").val();
             if (minYearP == "")
                 minYearP = "1000";
-
+            
             var maxYearP = $("#fp_maxYear").val();
             if (maxYearP == "")
                 maxYearP = "3000";
-
+            
             var maxResultsP = $("#fp_max").val();
             if (maxResultsP == "")
                 maxResultsP = "100";
@@ -221,7 +197,7 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
 
     prevPageA = 0;
     prevPageP = 0;
-
+    
     //reset geocoder wait time
     geocoder_wait = 0;
 
@@ -259,7 +235,7 @@ function searchArticles(searchTerm, minYear, maxYear, maxResults) {
         }
     });
 
-
+    
 }
 
 
@@ -470,91 +446,3 @@ function placeMarker(markerPos, title, info) {
 function toggleDiv(div) {
     $(div).toggle();
 }
-
-</script>
-
-
-    </head>
-
-    <body>
-        <div class="container">
-            <div id="header">
-                    <h1>Brisbane Floods - A Timeline</h1>
-
-            </div>
-            <div id="searchinput">
-                <div id="timeline">
-                    <img class="img-center" src="img/timeline.jpg" alt="" usemap="#map1378997951168">
-                    <map id="map1378997951168" name="map1378997951168">
-                        <area shape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
-                        <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
-                        <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
-                        <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
-                        <area shape="rect" coords="789,28,825,73" title="2013" alt="2013" href="#" id="tm2013">
-                    </map>
-                </div>
-
-                <a id="f_toggle" href="#">Advanced search</a>
-                <div id="filters" class="img-center">
-
-                    <div id="f_same">
-                        <input id="f_usesame" type="checkbox">Use the same filters for Articles and Photos
-                        <button id="f_submit">Search</button>
-                    </div>
-
-                    <div id="f_labels">
-                        <ul>
-                            <li>Date range</li>
-                            <li>Suburb/place</li>
-                            <li>Max results</li>
-                            <li>Additional keywords</li>
-                        </ul>
-                    </div>
-                    <div id="f_articles">
-                        <p><span id="fa_label">Articles</span></p>
-                        <input id="fa_minYear" class="f_year" type="text"> to
-                        <input id="fa_maxYear" class="f_year" type="text">
-                        <input id="fa_area" type="text">
-                        <input id="fa_max" type="text">
-                        <input id="fa_keywords" type="text">
-                        <input id="fa_exclude" type="text">
-                    </div>
-                    <div id="f_photos">
-                        <p><span id="fp_label">Photos</span></p>
-                        <input id="fp_minYear" class="f_year" type="text"> to
-                        <input id="fp_maxYear" class="f_year" type="text">
-                        <input id="fp_area" type="text">
-                        <input id="fp_max" type="text">
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- <div id="leftside"> -->
-                <div id="articles">
-                    <p><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda iste nobis veniam temporibus tenetur. Obcaecati, mollitia, fuga ab commodi a dignissimos modi doloribus nesciunt vitae blanditiis iste repellat quam eligendi!</span>
-                    <span>Expedita, beatae, harum ea nobis deleniti dignissimos molestias dolorum mollitia ipsum cupiditate quae deserunt saepe itaque at adipisci sed nulla iste! Minima adipisci tempore aut ullam quis sunt a culpa.</span>
-                    <span>Amet, fugit, nam, dolores cum in mollitia alias distinctio quo nulla saepe iusto ex debitis ducimus consequuntur doloremque aliquam tempora neque. Sapiente accusantium perspiciatis dolorem porro rem expedita in fuga.</span>
-                    <span>Eligendi, deleniti, natus esse ullam consequatur doloribus delectus iste praesentium totam animi asperiores iure pariatur blanditiis ut quisquam porro tempore distinctio ipsam vitae optio assumenda dolore enim. Quisquam, vero, veniam!</span>
-                    <span>Harum, obcaecati facere incidunt voluptatum quo similique iste mollitia explicabo voluptates sint sit maxime voluptate veritatis nam animi sapiente magni? Sapiente, ut, vitae quas quia accusamus illum ea dicta soluta.</span>
-                    <span>Dignissimos, minus nulla harum voluptas a maiores vel nobis corporis quae voluptate! Ut, maxime, laboriosam sequi tenetur ex harum aliquid a molestias soluta sed dolores tempora praesentium molestiae nihil corporis.</span>
-                    <span>Facilis, adipisci odit amet quisquam dolorem impedit animi quibusdam totam provident ut esse molestias beatae doloremque a ex sint eum soluta voluptatum ea asperiores ad architecto corporis nulla. Quo, dolore!</span>
-                    <span>Asperiores, cum, aliquid, maxime, porro totam sit dolorem repellat id optio quis molestias doloribus nobis non nulla nam ipsa maiores quisquam illum vero placeat. Doloribus itaque dolorem minima deserunt commodi.</span>
-                    <span>Voluptatem, excepturi, beatae voluptatum sit nobis distinctio harum veritatis dolorem vel nisi repellendus inventore magni est laborum repudiandae quia maiores eveniet nihil voluptate fuga fugiat dolor vero repellat consectetur rem.</span>
-                    <span>Nemo, maiores, earum vero corporis quidem quibusdam animi quaerat vitae illum possimus excepturi dolore repudiandae quasi quod rem reprehenderit illo repellat nisi. Quos, adipisci, rem impedit soluta veniam vero debitis.</span></p>
-                </div>
-            <!-- </div> -->
-            <div id="rightside">
-                <div id="map_canvas"></div>
-                <a id="a_load" href="#">See more articles</a> &nbsp;&nbsp; | &nbsp;&nbsp;
-                <a id="p_load" href="#"> Load more photos</a>
-            </div>
-            <div id="footer">
-                <!-- Powered by Trove -->
-                <a href="http://trove.nla.gov.au/" target="_blank" class="fl-right"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
-            </div>
-        </div>
-
-    </body>
-
-</html>
