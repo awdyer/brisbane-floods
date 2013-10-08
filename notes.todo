@@ -21,4 +21,5 @@ Priority list:
   ☐ - lightbox
   ☐ - infoboxes
 
-
+Bugs:
+  ☐ properly show photo collections (1 trove record which contains 15 images, for example)

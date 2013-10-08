@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test AnyOrigin</title>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+</head>
+<body>
+
+<input type="text" id="url">
+<button id="fetch">Fetch</button>
+
+<div id="output"></div>
+
+
+<script>
+
+$(window).load(function () {
+    $("#fetch").on("click", function () {
+        var URL = 'http://anyorigin.com/get?url=' + encodeURIComponent($("#url").val()) + '&callback=?';
+        $.getJSON(URL, function(data){
+            $('#output').html(data.contents);
+
+            var output = data.contents;
+
+            // var ind = output.indexOf('http://enc');
+            // if (ind != -1) {
+            //     alert('found enc: ' + ind);
+            // }
+
+            var enc = output.match(/\bhttp\S+jpg\b/g);
+            console.log(enc[0]);
+        });
+    });
+});
+
+</script>
+
+</body>
+</html>

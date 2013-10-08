@@ -1,0 +1,70 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Simple use of Cross-Site XMLHttpRequest (Using Access Control)</title>
+    <script type="text/javascript">
+    //<![CDATA[
+
+    var invocation = new XMLHttpRequest();
+    var url = 'http://aruner.net/resources/access-control-with-credentials/';
+    var invocationHistoryText;
+
+
+    function callOtherDomain(){
+        if(invocation)
+        {
+            invocation.open('GET', url, true);
+            //invocation.withCredentials = "true";
+            invocation.onreadystatechange = handler;
+            invocation.send();
+        }
+        else
+        {
+            invocationHistoryText = "Whoops -- Sorry.  No Invocation TookPlace At All or Errors Took Place";
+            var textNode = document.createTextNode(invocationHistoryText);
+            var textDiv = document.getElementById("textDiv");
+            textDiv.appendChild(textNode);
+        }
+
+    }
+    function handler(evtXHR)
+    {
+        if (invocation.readyState == 4)
+        {
+                if (invocation.status == 200)
+                {
+                    var response = invocation.responseText;
+                    invocationHistoryText = document.createTextNode(response);
+                    var textDiv = document.getElementById("textDiv");
+                    textDiv.appendChild(invocationHistoryText);
+
+                }
+                else
+                    alert("Invocation Errors Occured" + invocation.readyState);
+        }
+        else
+        {
+            alert("currently the application is at " + invocation.readyState);
+        }
+    }
+    //]]>
+
+
+    </script>
+</head>
+<body>
+    <form id="controlsToInvoke" action="">
+        <p>
+        <input type="button" value="Click to Invoke Another Site" onclick="callOtherDomain()" />
+        </p>
+    </form>
+    <p id="intro">
+    This page requests a resource on another domain that typically sets a counter Cookie.  But, since the request is made without setting the <code>withCredentials</code> flag to true, you can see that the resource is visited without sending the counter Cookie.
+    This shows that <code>XMLHttpRequest</code> makes cross-site requests without Cookies by default, and that in order to make those requests with Cookies, you have to explicitly set the <code>withCredentials</code> flag.</p>
+    <div id="textDiv">
+        This XHTML document GETs another resource using cross-site XHR, but does NOT set the <code>withCredentials</code> flag.  If you get a response back, the content of that response should reflect no Cookies being sent, since the code on this page does NOT set <code>withCredentials</code> flag.  Contrast this with <a href="credentialedRequest.html">a credentialed request</a>.
+    </div>
+</body>
+</html>
