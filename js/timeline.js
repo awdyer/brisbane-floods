@@ -3,7 +3,7 @@
 var apiKey = "71lcag6a17k5r6a7";
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
-var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
+var geocode_enabled = true; //set this to disable geocoding while debugging, since daily queries are limited
 var prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA, prevPageA = 0;
 var prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP, prevPageP = 0;
 var fUseSame = false;
@@ -39,6 +39,8 @@ google.maps.Marker.prototype.setMap = function (map) {
 
 
 $(window).load(function () {
+
+    console.log("geocode enabled: " + geocode_enabled);
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
@@ -242,11 +244,10 @@ function searchArticles(searchTerm, minYear, maxYear, maxResults) {
 function searchPictures(searchTerm, minYear, maxYear, maxResults) {
 
     //Perform picture search
-    if (!geocode_enabled) console.log("geocode disabled");
 
     var searchZone = "picture";
 
-    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&include=workversions&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";
+    var pictureURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&l-availibility=y%2Ff&include=workversions&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageP + "&callback=?";
 
     prevPageP += maxResults;
 
@@ -275,52 +276,112 @@ function processArticle(index, item) {
 
 function processPicture(index, item) {
 
-    //First get the location, then define infobox content and place marker
+    //check that photo's from a valid source
+    if (!checkValidSource(item)) {
+        return;
+    }
 
-    //Try to get lat/long coords from location tag
-    if (typeof item.version[0].record[0] === 'object') {
-        if (typeof item.version[0].record[0].metadata === 'object') {
-            if (typeof item.version[0].record[0].metadata.dc === 'object') {
-                if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
-                    var loc = item.version[0].record[0].metadata.dc.coverage;
+
+    var location = getLocation(item);
+
+    if (location != null) {
+        placeMarker(item, location[0], location[1]);
+
+        loadedPics++;
+        console.log("pics: " + loadedPics);
+        //console.log(item.troveUrl + ": " + item.version.length);
+
+    //If couldn't get location from tag, geocode photo description
+    } else {
+
+        if (geocode_enabled) {
+            geocoder_wait += geocode_delay; //Can't do too many queries per second
+            setTimeout(function () { codeAddress(item); }, geocoder_wait);
+        }
+    }
+}
+
+
+function checkValidSource(item) {
+
+    //Check that photo comes from a valid source (direct image url can be found)
+
+    var thumburl = getThumbURL(item);
+
+    //for testing, returns true unless an INVALID source is founds
+    var invalid = ['elibcat.library'];
+
+    var i = 0;
+    for (i=0; i<invalid.length; i++) {
+        if (thumburl.indexOf(invalid[i]) != -1)
+            return false;
+    }
+
+    var valid = ['flickr.com', 'bishop.slq', 'archivessearch.qld'];
+
+    for (i=0; i<valid.length; i++) {
+        if (thumburl.indexOf(valid[i]) != -1)
+            return true;
+    }
+
+    //for testing, returns true unless an invalid source is found (above)
+    return true;
+}
+
+
+function getThumbURL(item) {
+
+    //get thumbnail URL
+
+    var thumburl = "";
+    if (typeof item.identifier !== 'undefined') {
+        var i;
+        for (i = 0; i < item.identifier.length; i++) {
+            if (typeof item.identifier[i].linktype === 'string') {
+                if (item.identifier[i].linktype == 'thumbnail') {
+                    thumburl = item.identifier[1].value;
                 }
             }
         }
     }
 
-    //If location tag exists
-    if (typeof loc !== 'undefined') {
+    return thumburl;
+}
+
+
+function getLocation(item) {
+    //Try to get lat/long from location tag returned in Trove results
+
+    //Check if location tag exists
+    if (typeof item.version[0].record[0] === 'object') {
+        if (typeof item.version[0].record[0].metadata === 'object') {
+            if (typeof item.version[0].record[0].metadata.dc === 'object') {
+                if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
+                    var address = item.version[0].record[0].metadata.dc.coverage;
+                }
+            }
+        }
+    }
+
+    //If location tag exists, extract lat/long
+    if (typeof address !== 'undefined') {
 
         //check if it contains lat/long
-        var point = loc.match(/-?\d+\.\d+/g);
+        var point = address.match(/-?\d+\.\d+/g);
 
-        //both these tests shouldnt be needed, this is a kludge for some bug
         if (typeof point !== 'undefined' && point != null) {
 
             var lat = parseFloat(point[0]);
             var lng = parseFloat(point[1]);
 
             var markerPos = new google.maps.LatLng(lat, lng);
+            address = address.replace(/-?\d+\.\d+/g, '').slice(0, -3); //remove lat/long from address
 
-            //Successful in finding lat/long, so place a marker
-            placeMarker(markerPos, item.title, setInfoBoxContent(item, loc));
-
-            loadedPics++;
-            console.log("pics: " + loadedPics);
-            //console.log(item.troveUrl + ": " + item.version.length);
-            return;
+            return [markerPos, address];
         }
     }
 
-    //If not successful in getting lat/long, geocode the picture's title
-    //Can't do too many queries per second
-    if (geocode_enabled) {
-        geocoder_wait += geocode_delay;
-        setTimeout(function () {
-            codeAddress(item);
-        }, geocoder_wait);
-    }
-
+    return null;
 }
 
 
@@ -328,19 +389,22 @@ function codeAddress(item) {
 
     //Get address from item info, filter out common words
     var address = item.title + " " + item.snippet;
-    address = filterWords(address) + ", Brisbane, Australia";
+    address = filterWords(address);
+    geocode_address = address + ", Brisbane, Australia";
     // console.log(address);
 
     //perform geocode
     geocoder.geocode( {
-        'address': address
+        'address': geocode_address
     }, function (results, status) {
 
         if (status == google.maps.GeocoderStatus.OK) {
 
             //map.setCenter(results[0].geometry.location);
-            var loc = results[0].geometry.location;
-            placeMarker(loc, item.title, setInfoBoxContent(item, "      "));
+            var markerPos = results[0].geometry.location;
+            address = toTitleCase(address).replace(';', '');
+
+            placeMarker(item, markerPos, address);
 
             codedPics++;
             console.log("geopics: " + codedPics);
@@ -380,94 +444,17 @@ function filterWords(text) {
 }
 
 
-function setInfoBoxContent(item, loc) {
-
-    //Set the marker infobox content
-
-    //check if thumbnail exists, and if so get URL
-    var thumburl = "";
-    if (typeof item.identifier !== 'undefined') {
-        var i;
-        for (i = 0; i < item.identifier.length; i++) {
-            if (typeof item.identifier[i].linktype === 'string') {
-                if (item.identifier[i].linktype == 'thumbnail') {
-                    thumburl = item.identifier[1].value;
-                }
-            }
-        }
-    }
-
-    if (thumburl.indexOf('flickr.com') != -1) {
-        imageURL = thumburl.slice(0,-5) + "b.jpg";
-        console.log(imageURL);
-    }
-    else {
-        if (thumburl.indexOf('bishop.slq') != -1) {
-            //console.log("hdl.handle");
-
-            var identifier = item.version[0].record[0].header.identifier[0];
-            var num = identifier.match(/\d+/g);
-
-            var metaURL = 'http://bishop.slq.qld.gov.au/webclient/MetadataManager?pid=' + num;
-            //console.log(metaURL);
-
-            imageURL = fetchQSLimage(metaURL);
-            // console.log(imageURL);
-
-        }
-        else {
-            console.log(thumburl);
-            imageURL = '#';
-        }
-    }
-
-    //photo description
-    var snippet = "";
-    if (typeof item.snippet === 'string') snippet = item.snippet;
-
-    //infobox HTML
-    //item.identifier[0].value
-    var info = "<div class='mapinfobox'><p><a href='" + imageURL + "' target='_blank'><img src='" + thumburl + "' alt='blah'></a><a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" + loc.replace(/-?\d+\.\d+/g, '').slice(0, -3) + "<br /></p><p>" + snippet + "</p></div>";
-
-    // var info = "<div class='mapinfobox'><p><a class='lbox' href='" + "http://www.designyourway.net/diverse/jqlight/fancy.jpg?f3ccce" + "' title='Blah'><img src='" + thumburl + "' alt='blah'></a><a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a><br />" + loc.replace(/-?\d+\.\d+/g, '').slice(0, -3) + "<br /></p><p>" + snippet + "</p></div>";
-
-
-
-    return info;
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
 
-function fetchQSLimage(metaURL) {
-
-    /* Fetches images from QSL. Has to do a cross-origin call to get the page source
-        of metadata page, which contains the direct URL, and extract it */
-
-    var URL = 'http://anyorigin.com/get?url=' + encodeURIComponent(metaURL) + '&callback=?';
-
-    $.getJSON(URL, function(data){
-        var output = data.contents;
-
-        //extract image URL out of source
-        var imageURL = output.match(/\bhttp\S+jpg\b/g);
-        //mutate the URL into the fullsize image URL
-        imageURL = imageURL[0].replace('preview','research').slice(0,-5) + "r.jpg";
-
-        console.log(imageURL);
-        return imageURL;
-    });
-}
-
-
-function placeMarker(markerPos, title, info) {
+function placeMarker(item, markerPos, address) {
 
     //Place a marker on the map after location and content has been determined
+    var index = infoboxes.length;
 
-    //Create marker
-    var marker = new google.maps.Marker({
-        position: markerPos,
-        map: map,
-        title: title
-    });
+    var info = getContent(item, address, index);
 
     pinfbox = new InfoBox({
             content: info,
@@ -481,9 +468,16 @@ function placeMarker(markerPos, title, info) {
             closeBoxMargin: "12px 4px 2px 2px",
     });
 
-    var index = infoboxes.length;
+    //push infobox to array of all infoboxes
     infoboxes[index] = pinfbox;
 
+
+    //Create marker
+    var marker = new google.maps.Marker({
+        position: markerPos,
+        map: map,
+        title: item.title
+    });
 
     //Set up the infobox
     google.maps.event.addListener(marker, 'click', function () {
@@ -496,6 +490,113 @@ function placeMarker(markerPos, title, info) {
         openinfobox = infoboxes[index];
 
     });
+}
+
+
+function getContent(item, address, ibindex) {
+
+    //Get content for infobox
+
+    var thumburl = getThumbURL(item);
+
+    //get original image URL
+    if (thumburl != "") {
+        imgurl = getImageURL(item, thumburl, ibindex);
+    }
+
+    if (typeof imgurl === 'undefined') {
+        //URL hasn't been returned yet
+        imgurl = '#'; //set this to placeholder gif
+    }
+
+    //determine content
+    var content = determineContent(item, address, thumburl, imgurl);
+
+
+    return content;
+}
+
+
+function getImageURL(item, thumburl, ibindex) {
+
+    //Check the image source and find the original image URL (different method req for each source)
+
+    //Flickr (easy)
+    if (thumburl.indexOf('flickr.com') != -1) {
+        imgurl = thumburl.slice(0,-5) + "b.jpg";
+    }
+
+    //Archivesearch (easy)
+    else if (thumburl.indexOf('archivessearch.qld') != -1) {
+        imgurl = thumburl.replace('thumb=true', '');
+    }
+
+    //QSL (John Oxley Library) (difficult)
+    else if (thumburl.indexOf('bishop.slq') != -1) {
+
+        var identifier = item.version[0].record[0].header.identifier[0];
+        var num = identifier.match(/\d+/g);
+        var metaURL = 'http://bishop.slq.qld.gov.au/webclient/MetadataManager?pid=' + num;
+        //console.log(metaURL);
+
+        imgurl = fetchQSLimage(metaURL, ibindex);
+
+    }
+
+    //Other source - not enough relevant to 'brisbane floods' to bother with
+    else {
+        console.log('source: ' + thumburl);
+        imgurl = '#';
+    }
+
+    if (typeof imgurl !== 'undefined') {
+        console.log(imgurl);
+    }
+
+    return imgurl;
+}
+
+
+function fetchQSLimage(metaURL, ibindex) {
+
+    /* Fetches images from QSL. Has to do a cross-origin call to get the page source
+        of metadata page, which contains the direct URL, and extract it */
+
+    var URL = 'http://anyorigin.com/get?url=' + encodeURIComponent(metaURL) + '&callback=?';
+
+    $.getJSON(URL, function(data){
+        var output = data.contents;
+
+        //extract image URL out of source
+        var imgurl = output.match(/\bhttp\S+jpg\b/g);
+        //mutate the URL into the fullsize image URL
+        imgurl = imgurl[0].replace('preview','research').slice(0,-5) + "r.jpg";
+        //for some reason, some URLs returned have '/backup1/images' instead of the domain
+        imgurl = imgurl.replace('backup1/images', 'enc.slq.qld.gov.au');
+
+
+        //return imgurl;
+        //instead of returning, just directly update infobox where it would be returned to
+        //returning it won't work as it will have already been set as 'undefined'
+        var excontent = infoboxes[ibindex].getContent();
+        var newcontent = excontent.replace("href='#'", "href='" + imgurl + "'");
+        infoboxes[ibindex].setContent(newcontent);
+        //console.log(imgurl);
+
+    });
+}
+
+
+function determineContent(item, address, thumburl, imgurl) {
+
+    //photo description
+    var description = "";
+    if (typeof item.description === 'string')
+        description = item.description;
+
+    //infobox HTML
+    var content = "<div class='mapinfobox'> <p><a href='" + imgurl + "' target='_blank'><img src='" + thumburl + "' alt='photo'></a> <a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a> <br />" + address + "<br /></p> <p>" + description + "</p> </div>";
+    return content;
 }
 
 
