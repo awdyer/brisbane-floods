@@ -1,9 +1,10 @@
 
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
+var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
+
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
-var geocode_enabled = true; //set this to disable geocoding while debugging, since daily queries are limited
 var prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA, prevPageA = 0;
 var prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP, prevPageP = 0;
 var fUseSame = false;
@@ -578,8 +579,9 @@ function fetchQSLimage(metaURL, ibindex) {
         //return imgurl;
         //instead of returning, just directly update infobox where it would be returned to
         //returning it won't work as it will have already been set as 'undefined'
+
         var excontent = infoboxes[ibindex].getContent();
-        var newcontent = excontent.replace("href='#'", "href='" + imgurl + "'");
+        var newcontent = excontent.replace(/#/g, imgurl);
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
 
@@ -594,8 +596,10 @@ function determineContent(item, address, thumburl, imgurl) {
     if (typeof item.description === 'string')
         description = item.description;
 
+
+
     //infobox HTML
-    var content = "<div class='mapinfobox'> <p><a href='" + imgurl + "' target='_blank'><img src='" + thumburl + "' alt='photo'></a> <a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a> <br />" + address + "<br /></p> <p>" + description + "</p> </div>";
+    var content = "<div class='mapinfobox'> <p><a rel='lightbox' href='" + imgurl + "' onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + description + "\");return false' title='" + item.title + "'><img src='" + thumburl + "' alt='photo'></a> <a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a> <br />" + address + "<br /></p> <p>" + description + "</p> </div>";
     return content;
 }
 
