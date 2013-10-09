@@ -4,26 +4,22 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title>Brisbane Floods - A Timeline</title>
-        <link href="jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
 
-        <!-- <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script> -->
+        <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script>
+
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+
         <script type='text/javascript' src='js/persist-min.js'></script>
-        <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
-        <script src="jquery.mCustomScrollbar.concat.min.js"></script>
+
+
         <!--<script type='text/javascript' src='js/search.js'></script>
         debugging is a nightmare, because chrome doesn't properly reload external js file-->
-        <link rel="stylesheet" type="text/css" href="base.css">
+
         <!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css"> -->
         <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
-        <style type='text/css'>
-            @import url('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
-        </style>
 
-        <!-- lightbox -->
-        <link rel="stylesheet" href="colorbox.css" />
-        <script type="text/javascript" src="jquery.colorbox.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/base.css">
 
 
 
@@ -71,8 +67,6 @@ google.maps.Marker.prototype.setMap = function (map) {
 
 $(window).load(function () {
 
-    $(".lbox").colorbox({rel:'group1'});
-
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
     $("#tm1893").on("click", function () { newSearch(1893); return false; });
@@ -110,15 +104,6 @@ $(window).load(function () {
     //Hide advanced options
     toggleDiv("#filters");
 
-    // //custom scrollbar
-    // $("#articles").mCustomScrollbar({
-    //     theme: "dark",
-    //     advanced:{
-    //         updateOnContentResize: true
-    //     }
-    // });
-
-
     //Start google map
     geocoder = new google.maps.Geocoder();
 
@@ -138,6 +123,12 @@ $(window).load(function () {
     };
 
     map = new google.maps.Map(document.getElementById("map_canvas"), settings);
+
+    //set up map so when it's clicked, any open infobox closes
+    google.maps.event.addListener(map, 'click', function () {
+        //close existing infobox
+        if (openinfobox) openinfobox.close();
+    });
 
 
     //If came from startpage, automatically search that year
@@ -244,7 +235,7 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     //clear existing results
     $('#articles').empty();
     map.clearMarkers();
-    if (photoInfoBox) photoInfoBox.close();
+    if (openinfobox) openinfobox.close();
 
     //search
     searchArticles(searchTermA, minYearA, maxYearA, maxResultsA);
@@ -301,7 +292,6 @@ function processArticle(index, item) {
     var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='" + item.troveUrl + "' target='_blank'>" + item.title.value + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
 
     $('#articles').append(text);
-    //articles").mCustomScrollbar("update");
 
     loadedArts++;
     console.log("arts: " + loadedArts);
@@ -553,7 +543,7 @@ function toggleDiv(div) {
             </div>
             <div id="searchinput">
                 <div id="timeline">
-                    <img class="img-center" src="img/timeline.jpg" alt="" usemap="#map1378997951168">
+                    <img class="img-center" src="images/timeline.jpg" alt="" usemap="#map1378997951168">
                     <map id="map1378997951168" name="map1378997951168">
                         <area shape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
                         <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
@@ -601,16 +591,6 @@ function toggleDiv(div) {
 
             <!-- <div id="leftside"> -->
                 <div id="articles">
-                    <p><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda iste nobis veniam temporibus tenetur. Obcaecati, mollitia, fuga ab commodi a dignissimos modi doloribus nesciunt vitae blanditiis iste repellat quam eligendi!</span>
-                    <span>Expedita, beatae, harum ea nobis deleniti dignissimos molestias dolorum mollitia ipsum cupiditate quae deserunt saepe itaque at adipisci sed nulla iste! Minima adipisci tempore aut ullam quis sunt a culpa.</span>
-                    <span>Amet, fugit, nam, dolores cum in mollitia alias distinctio quo nulla saepe iusto ex debitis ducimus consequuntur doloremque aliquam tempora neque. Sapiente accusantium perspiciatis dolorem porro rem expedita in fuga.</span>
-                    <span>Eligendi, deleniti, natus esse ullam consequatur doloribus delectus iste praesentium totam animi asperiores iure pariatur blanditiis ut quisquam porro tempore distinctio ipsam vitae optio assumenda dolore enim. Quisquam, vero, veniam!</span>
-                    <span>Harum, obcaecati facere incidunt voluptatum quo similique iste mollitia explicabo voluptates sint sit maxime voluptate veritatis nam animi sapiente magni? Sapiente, ut, vitae quas quia accusamus illum ea dicta soluta.</span>
-                    <span>Dignissimos, minus nulla harum voluptas a maiores vel nobis corporis quae voluptate! Ut, maxime, laboriosam sequi tenetur ex harum aliquid a molestias soluta sed dolores tempora praesentium molestiae nihil corporis.</span>
-                    <span>Facilis, adipisci odit amet quisquam dolorem impedit animi quibusdam totam provident ut esse molestias beatae doloremque a ex sint eum soluta voluptatum ea asperiores ad architecto corporis nulla. Quo, dolore!</span>
-                    <span>Asperiores, cum, aliquid, maxime, porro totam sit dolorem repellat id optio quis molestias doloribus nobis non nulla nam ipsa maiores quisquam illum vero placeat. Doloribus itaque dolorem minima deserunt commodi.</span>
-                    <span>Voluptatem, excepturi, beatae voluptatum sit nobis distinctio harum veritatis dolorem vel nisi repellendus inventore magni est laborum repudiandae quia maiores eveniet nihil voluptate fuga fugiat dolor vero repellat consectetur rem.</span>
-                    <span>Nemo, maiores, earum vero corporis quidem quibusdam animi quaerat vitae illum possimus excepturi dolore repudiandae quasi quod rem reprehenderit illo repellat nisi. Quos, adipisci, rem impedit soluta veniam vero debitis.</span></p>
                 </div>
             <!-- </div> -->
             <div id="rightside">
