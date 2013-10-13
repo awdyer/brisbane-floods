@@ -1,7 +1,7 @@
 
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
-var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
+var geocode_enabled = true; //set this to disable geocoding while debugging, since daily queries are limited
 
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -183,7 +183,10 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
             var searchTermP = searchTermA;
             var minYearP = minYearA;
             var maxYearP = maxYearA;
-            var maxResultsP = maxResultsA;
+            if (maxResultsA == "")
+                var maxResultsP = "100";
+            else
+                var maxResultsP = maxResultsA;
         }
     }
 
@@ -376,7 +379,7 @@ function getLocation(item) {
             var lng = parseFloat(point[1]);
 
             var markerPos = new google.maps.LatLng(lat, lng);
-            address = address.replace(/-?\d+\.\d+/g, '').slice(0, -3); //remove lat/long from address
+            address = address.replace(/-?\d+\.\d+/g, '').slice(0, -3).replace(/;/g, ''); //remove lat/long from address
 
             return [markerPos, address];
         }
@@ -403,7 +406,7 @@ function codeAddress(item) {
 
             //map.setCenter(results[0].geometry.location);
             var markerPos = results[0].geometry.location;
-            address = toTitleCase(address).replace(';', '');
+            address = toTitleCase(address).replace(/;/g, '');
 
             placeMarker(item, markerPos, address);
 
@@ -576,7 +579,6 @@ function fetchQSLimage(metaURL, ibindex) {
         imgurl = imgurl.replace('backup1/images', 'enc.slq.qld.gov.au');
 
 
-        //return imgurl;
         //instead of returning, just directly update infobox where it would be returned to
         //returning it won't work as it will have already been set as 'undefined'
 
@@ -584,6 +586,8 @@ function fetchQSLimage(metaURL, ibindex) {
         var newcontent = excontent.replace(/#/g, imgurl);
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
+
+
 
     });
 }
@@ -593,8 +597,8 @@ function determineContent(item, address, thumburl, imgurl) {
 
     //photo description
     var description = "";
-    if (typeof item.description === 'string')
-        description = item.description;
+    if (typeof item.snippet === 'string')
+        description = item.snippet;
 
 
 

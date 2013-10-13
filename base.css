@@ -3,15 +3,7 @@
 }
 
 #header {
-    text-align: left;
-}
-
-#blah {
-    font-size: 10px;
-    background-color: blue;
-    margin: auto;
-    width: 100px;
-
+    text-align: center;
 }
 
 .img-center{
@@ -64,7 +56,6 @@
     margin-right: auto;
     float: left;
     /*border: 1px solid blue;*/
-    
 }
 
 ul {

@@ -1,12 +1,7 @@
 Priority list:
 
  ☐ - (Key info)
- ☐ - Extracting original image
-   ☐ flickr api
-   ☐ national gallery
-   ☐ state libraries not doable?
-     metadataSource
-       NUC symbol
+ ✔ - Extracting original image @done (13-10-10 20:04)
  ☐ - Help popups
  ☐ - flatten
  ☐ - ('About' page)
@@ -20,6 +15,12 @@ Priority list:
   ☐ - popups
   ☐ - lightbox
   ☐ - infoboxes
+  ☐ - add loading gifs when you perform a search, click a thumbnail, etc
 
-Bugs:
+
+Bugs/other:
   ☐ properly show photo collections (1 trove record which contains 15 images, for example)
+  ☐ parse other image sources
+  ☐ find a way to hide the delay between marker placement and imgurl retrival
+  ☐ allow user to view next/previous when in lightbox (group all photos)
+    ☐ if a user scroll photos in the lightbox, when they close it, open the infobox of the image they were viewing

@@ -15,7 +15,7 @@
         <script type="text/javascript" src="js/timeline.js"></script>
 
 
-        <!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css"> -->
+        <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css">
         <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
 
         <link rel="stylesheet" type="text/css" href="css/base.css">
@@ -30,15 +30,19 @@
 
     <body>
         <div class="container">
-            <div id="header">
-                    <h1>Brisbane Floods - A Timeline</h1>
 
+            <div id="headerbar">
+                <div id="header">
+                        <h1>Flood Finder</h1>
+
+                </div>
             </div>
+
             <div id="searchinput">
                 <div id="timeline">
                     <img class="img-center" src="images/timeline.jpg" alt="" usemap="#map1378997951168">
                     <map id="map1378997951168" name="map1378997951168">
-                        <area shape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
+                        <hape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
                         <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
                         <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
                         <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
@@ -83,21 +87,23 @@
             </div>
 
             <!-- <div id="leftside"> -->
-                <div id="articles">
+            <div class="results"></div>
+                    <div id="articles">
+                    </div>
+                <!-- </div> -->
+                <div id="rightside">
+                    <div id="map_canvas"></div>
+                    <a id="a_load" href="#">See more articles</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+                    <a id="p_load" href="#"> Load more photos</a>
                 </div>
-            <!-- </div> -->
-            <div id="rightside">
-                <div id="map_canvas"></div>
-                <a id="a_load" href="#">See more articles</a> &nbsp;&nbsp; | &nbsp;&nbsp;
-                <a id="p_load" href="#"> Load more photos</a>
             </div>
+
+            <div class="push"></div>
+
             <div id="footer">
                 <!-- Powered by Trove -->
                 <a href="http://trove.nla.gov.au/" target="_blank" class="fl-right"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
             </div>
-
-            <!-- TEST LIGHTBOX
-             <a href='http://www.geoffwilkins.net/ulysses/images/600px-National_Maternity_Hospital.jpg' rel='lightbox' onClick='jQuery.slimbox(\"http://www.geoffwilkins.net/ulysses/images/600px-National_Maternity_Hospital.jpg\", \"Holles Street and National Maternity Hospital\");return false' title='Holles Street and National Maternity Hospital'><img src='http://www.geoffwilkins.net/ulysses/images/90px-National_Maternity_Hospital.jpg' align='right' hspace='8'></a> -->
         </div>
 
 
