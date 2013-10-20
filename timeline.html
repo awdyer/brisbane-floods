@@ -18,10 +18,15 @@
         <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css">
         <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
 
-        <link rel="stylesheet" type="text/css" href="css/base.css">
+        
 
         <script type="text/javascript" src="js/slimbox2.js"></script>
         <link rel="stylesheet" href="css/slimbox2.css" type="text/css" media="screen" />
+
+
+        <link rel="stylesheet" href="css/foundation.css">
+
+        <link rel="stylesheet" type="text/css" href="css/base.css">
 
 
 
@@ -29,83 +34,186 @@
     </head>
 
     <body>
-        <div class="container">
+        <!-- <div class="container"> -->
 
-            <div id="headerbar">
-                <div id="header">
-                        <h1>Flood Finder</h1>
+            <!-- <div class="row"> -->
+                <!-- <div class="large-12 columns"> -->
 
-                </div>
-            </div>
-
-            <div id="searchinput">
-                <div id="timeline">
-                    <img class="img-center" src="images/timeline.jpg" alt="" usemap="#map1378997951168">
-                    <map id="map1378997951168" name="map1378997951168">
-                        <hape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
-                        <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
-                        <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
-                        <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
-                        <area shape="rect" coords="789,28,825,73" title="2013" alt="2013" href="#" id="tm2013">
-                    </map>
-                </div>
-
-                <a id="f_toggle" href="#">Advanced search</a>
-                <div id="filters" class="img-center">
-
-                    <div id="f_same">
-                        <input id="f_usesame" type="checkbox">Use the same filters for Articles and Photos
-                        <button id="f_submit">Search</button>
-                    </div>
-
-                    <div id="f_labels">
-                        <ul>
-                            <li>Date range</li>
-                            <li>Suburb/place</li>
-                            <li>Max results</li>
-                            <li>Additional keywords</li>
-                        </ul>
-                    </div>
-                    <div id="f_articles">
-                        <p><span id="fa_label">Articles</span></p>
-                        <input id="fa_minYear" class="f_year" type="text"> to
-                        <input id="fa_maxYear" class="f_year" type="text">
-                        <input id="fa_area" type="text">
-                        <input id="fa_max" type="text">
-                        <input id="fa_keywords" type="text">
-                        <input id="fa_exclude" type="text">
-                    </div>
-                    <div id="f_photos">
-                        <p><span id="fp_label">Photos</span></p>
-                        <input id="fp_minYear" class="f_year" type="text"> to
-                        <input id="fp_maxYear" class="f_year" type="text">
-                        <input id="fp_area" type="text">
-                        <input id="fp_max" type="text">
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- <div id="leftside"> -->
-            <div class="results"></div>
-                    <div id="articles">
+                    <!-- Header -->
+                    <div class="header">
+                            <h1>Brisbane Floods - A Timeline</h1>
                     </div>
                 <!-- </div> -->
-                <div id="rightside">
+            <!-- </div> -->
+
+            <div class="row">
+                <div class="large-10 columns push-1">
+
+                    <div class="row">
+                        <div class="large-2 columns push-10">
+                            <a id="f_toggle" href="#" style="font-size: 10px;">Toggle</a>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="timeline">
+                        <div class="row">
+                            <div class="large-10 columns push-1">
+                                <img src="images/timeline.jpg" alt="" usemap="#map1378997951168">
+                                <map id="map1378997951168" name="map1378997951168">
+                                    <area shape="rect" coords="109,27,156,72" title="1893" alt="1893" href="#" id="tm1893">
+                                    <area shape="rect" coords="329,28,389,75" title="1931" alt="1931" href="#" id="tm1931">
+                                    <area shape="rect" coords="504,31,543,75" title="1974" alt="1974" href="#" id="tm1974">
+                                    <area shape="rect" coords="751,30,786,74" title="2011" alt="2011" href="#" id="tm2011">
+                                    <area shape="rect" coords="789,28,825,73" title="2013" alt="2013" href="#" id="tm2013">
+                                </map>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters">
+                        <div class="large-8 columns push-2">
+                        <div class="row">
+                        
+
+                            <!-- First column - row labels -->
+                            <div class="large-2 columns">
+                                <div class="row filpush"><span class="filter_label">&nbsp;</span></div>
+                                <div class="row fillab"><span class="filter_label">Years</span></div>
+                                <div class="row fillab"><span class="filter_label">Suburb</span></div>
+                                <div class="row fillab"><span class="filter_label">Max results</span></div>
+                                <div class="row fillab"><span class="filter_label">Keywords</span></div>
+                            </div>  
+
+                            <!-- Second column - articles -->
+                            <div class="large-3 columns push-1">
+                                <div class="row filcollab"><span>Articles</span></div>
+                                <div class="row">
+                                    <input id="fa_minYear" class="f_year" type="text"> &mdash;
+                                    <input id="fa_maxYear" class="f_year" type="text">
+                                </div>
+                                <div class="row"><input id="fa_area" class="f_text" type="text"></div>
+                                <div class="row"><input id="fa_max" class="f_year" type="text"></div>
+                                <div class="row"><input id="fa_keywords" class="f_text" type="text"></div>
+                            </div>
+
+                            <!-- Third column - photos -->
+                            <div class="large-3 columns pull-1">
+                                <div class="row filcollab"><span>Photos</span></div>
+                                <div class="row">
+                                    <input id="fp_minYear" class="f_year" type="text"> &mdash;
+                                    <input id="fp_maxYear" class="f_year" type="text">
+                                </div>
+                                <div class="row"><input id="fp_area" class="f_text" type="text"></div>
+                                <div class="row"><input id="fp_max" class="f_year" type="text"></div>
+                            </div>
+
+                        </div> 
+                        
+
+                        <!-- Filter search -->
+                        <div class="row">
+                            <input id="f_usesame" type="checkbox">
+                            <span>Use the same filters for Articles and Photos</span>
+                        </div>
+                        <div class="row"><button id="f_submit" class="small">Search</button></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="large-4 columns nogutter">
+
+                
+
+                        <div id="articles">
+                            <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea, quos, ut dolorum voluptatum accusamus beatae delectus ab ratione quo at optio eum voluptas quisquam sit consectetur vitae amet nobis voluptates!</div>
+                            <div>Cupiditate, quae, laborum nemo veritatis quo odit illum fugit eveniet sit pariatur ut vitae harum recusandae rem fuga ratione qui iste cumque necessitatibus consectetur. Dolores ea nisi adipisci quod obcaecati.</div>
+                            <div>Tempore, at, magni cumque incidunt in totam dolore suscipit expedita facilis accusamus. Tempora, laudantium, enim, illo modi animi eius eaque impedit accusamus quaerat dolore corporis placeat quod quas magni sit.</div>
+                            <div>Error, deleniti animi blanditiis dolorum quis debitis atque nesciunt ad ratione repellat officiis laborum suscipit at placeat numquam eos ducimus quidem dolor accusantium amet pariatur iure officia libero quibusdam explicabo!</div>
+                            <div>Assumenda, fugiat, in, ea, iure eum soluta deleniti dolores nihil enim porro corporis consequatur ullam unde autem laudantium amet possimus mollitia quos recusandae quod. Neque facere quisquam ea laudantium eius.</div>
+                            <div>Placeat, labore, quibusdam quae harum adipisci quod fuga aliquam recusandae repudiandae id autem error nulla obcaecati atque provident est eveniet illo nisi nam molestiae. Quos, facilis optio cupiditate nostrum nesciunt!</div>
+                            <div>Reiciendis, quia possimus magni libero vero unde illum veniam incidunt quidem deleniti. Iusto, quas, nam maiores saepe illum soluta autem voluptatibus est perspiciatis ratione minima modi eum nihil quae eos.</div>
+                            <div>Consectetur, assumenda, repudiandae non tempore facilis nam sed temporibus inventore ut sapiente amet quidem mollitia a. Exercitationem, dolorem, illum cupiditate enim tempore quos neque quidem ex unde nulla obcaecati et.</div>
+                            <div>Qui, quibusdam, suscipit, deleniti mollitia dicta ducimus repudiandae quas omnis iusto quam fuga tenetur enim harum quia at veniam reprehenderit nemo recusandae consectetur accusamus a quaerat beatae temporibus optio blanditiis!</div>
+                            <div>Ullam, porro, commodi, animi harum voluptates non explicabo labore consequatur possimus ad beatae optio deleniti magnam deserunt mollitia laboriosam cum ut cupiditate! Voluptas perferendis at ad atque id eius itaque.</div>
+                        </div>
+
+                        <div class="seemore"><a href="#">See more articles</a></div>
+
+                        
+                </div>
+
+                <div class="large-8 columns nogutter">
+
                     <div id="map_canvas"></div>
-                    <a id="a_load" href="#">See more articles</a> &nbsp;&nbsp; | &nbsp;&nbsp;
-                    <a id="p_load" href="#"> Load more photos</a>
+                    <div class="seemore"><a href="#"> Load more photos</a></div>
                 </div>
             </div>
 
-            <div class="push"></div>
-
-            <div id="footer">
-                <!-- Powered by Trove -->
-                <a href="http://trove.nla.gov.au/" target="_blank" class="fl-right"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
+            <div class="footer">
+                <div class="right">
+                    <!-- Powered by Trove -->
+                    <a href="http://trove.nla.gov.au/" target="_blank"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
+                </div>
+                <p>&nbsp;</p>
             </div>
-        </div>
 
+
+
+<!-- Foundation stuff -->
+<script>
+  document.write('<script src=' +
+  ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
+  '.js><\/script>')
+</script>
+  
+  <script src="js/foundation.min.js"></script>
+  <!--
+  
+  <script src="js/foundation/foundation.js"></script>
+  
+  <script src="js/foundation/foundation.alerts.js"></script>
+  
+  <script src="js/foundation/foundation.clearing.js"></script>
+  
+  <script src="js/foundation/foundation.cookie.js"></script>
+  
+  <script src="js/foundation/foundation.dropdown.js"></script>
+  
+  <script src="js/foundation/foundation.forms.js"></script>
+  
+  <script src="js/foundation/foundation.joyride.js"></script>
+  
+  <script src="js/foundation/foundation.magellan.js"></script>
+  
+  <script src="js/foundation/foundation.orbit.js"></script>
+  
+  <script src="js/foundation/foundation.reveal.js"></script>
+  
+  <script src="js/foundation/foundation.section.js"></script>
+  
+  <script src="js/foundation/foundation.tooltips.js"></script>
+  
+  <script src="js/foundation/foundation.topbar.js"></script>
+  
+  <script src="js/foundation/foundation.interchange.js"></script>
+  
+  <script src="js/foundation/foundation.placeholder.js"></script>
+  
+  <script src="js/foundation/foundation.abide.js"></script>
+  
+  -->
+  
+  <script>
+    $(document).foundation();
+  </script>
 
 
     </body>

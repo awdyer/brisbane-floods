@@ -1,7 +1,7 @@
 
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
-var geocode_enabled = true; //set this to disable geocoding while debugging, since daily queries are limited
+var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
 
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -56,7 +56,7 @@ $(window).load(function () {
         return false;
     });
 
-    $("#f_toggle").on("click", function () { toggleDiv("#filters"); return false; });
+    $("#f_toggle").on("click", function () { toggleDiv(".filters"); toggleDiv(".timeline"); return false; });
     $("#a_load").on("click", function () {
         searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); return false; });
     $("#p_load").on("click", function () {
@@ -78,7 +78,7 @@ $(window).load(function () {
     });
 
     //Hide advanced options
-    toggleDiv("#filters");
+    toggleDiv(".filters");
 
     //Start google map
     geocoder = new google.maps.Geocoder();
@@ -148,8 +148,8 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     else {
         //Get article filters
         var searchTermA = "brisbane floods " + $("#fa_area").val() + " " + $("#fa_keywords").val();
-        if ($("#fa_exclude").val() != "")
-            searchTermA += " NOT " + $("#fa_exclude").val();
+        // if ($("#fa_exclude").val() != "")
+        //     searchTermA += " NOT " + $("#fa_exclude").val();
 
         var minYearA = $("#fa_minYear").val();
         if (minYearA == "")
@@ -586,8 +586,6 @@ function fetchQSLimage(metaURL, ibindex) {
         var newcontent = excontent.replace(/#/g, imgurl);
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
-
-
 
     });
 }
