@@ -2,6 +2,7 @@
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
 var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
+var cookie = "ZZZZZ3"; //used for first time visitor cookie
 
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -13,9 +14,17 @@ var loadedPics, loadedArts, codedPics;
 
 var infoboxes = []; //new array
 var openinfobox;
+var imgpopups = [];
+var imgastr = "";
+
+var firstSearch = false;
+var firstMarker = 0;
+var firstArticle = 0;
+var firstPhoto = 0;
+var firstToggle = 0;
 
 //map marker management - global
-google.maps.Map.prototype.markers = new Array();
+google.maps.Map.prototype.markers = [];
 
 google.maps.Map.prototype.getMarkers = function () {
     return this.markers;
@@ -26,7 +35,7 @@ google.maps.Map.prototype.clearMarkers = function () {
     for (i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
     }
-    this.markers = new Array();
+    this.markers = [];
 };
 
 google.maps.Marker.prototype._setMap = google.maps.Marker.prototype.setMap;
@@ -56,7 +65,12 @@ $(window).load(function () {
         return false;
     });
 
-    $("#f_toggle").on("click", function () { toggleDiv(".filters"); toggleDiv(".timeline"); return false; });
+    $("#f_toggle").on("click", function () {
+        toggleDiv(".filters");
+        toggleDiv(".timeline");
+        $("#helpdialog5").dialog("close");
+        return false;
+    });
     $("#a_load").on("click", function () {
         searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); return false; });
     $("#p_load").on("click", function () {
@@ -113,14 +127,46 @@ $(window).load(function () {
         if (ok) {
             console.log('year_key = ' + val);
 
-            if (val != "") {
+            if (val !== "") {
                 newSearch(val);
                 store.set('year_key', "");
             }
         }
     });
 
+    // First time visitors
+    var visit=GetCookie(cookie);
+    if (visit===null){
+       firstTimeVisitor();
+
+       var expire=new Date();
+       expire=new Date(expire.getTime()+7776000000);
+       document.cookie=cookie+"=here; expires="+expire;
+    }
+
 });
+
+
+function firstTimeVisitor() {
+    // firstSearch = true;
+    firstArticle = 1;
+    firstMarker = 1;
+    firstPhoto = 1;
+    firstToggle = 1;
+
+    // $("#helpdialog1").dialog( {
+    //     position: { my: "right top", at: "right bottom", of: $(".timeline") }
+    // });
+}
+
+
+function openDialog(handler, pos) {
+    $(handler).dialog( {
+        hide: "fade",
+        height: 120,
+        position: pos
+     }); 
+}
 
 
 function newSearch(searchYear, searchTerm, minYear, maxYear) {
@@ -220,6 +266,30 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     searchArticles(searchTermA, minYearA, maxYearA, maxResultsA);
     searchPictures(searchTermP, minYearP, maxYearP, maxResultsP);
 
+    // remove help popups when clicking on timeline
+    // if (firstSearch) {
+    //     $("#helpdialog1").dialog("close");
+    // }
+    if (firstArticle == 2) {
+        $("#helpdialog2").dialog("close");
+    }
+    if (firstMarker == 2) {
+        $("#helpdialog3").dialog("close");
+    }
+    if (firstPhoto == 2) {
+        $("#helpdialog4").dialog("close");
+    }
+    if (firstToggle == 1) {
+        // show the filters dialog a short time after the first search
+        setTimeout( function () {
+            openDialog("#helpdialog5", { my: "center top", at: "center+10% top+10%", of: $(".header") } );
+            firstToggle = 2;
+        }, 8000);
+    }
+    else if (firstToggle == 2) {
+        $("#helpdialog5").dialog("close");
+    }
+
 }
 
 
@@ -271,6 +341,18 @@ function processArticle(index, item) {
 
     $('#articles').append(text);
 
+    // Help dialog
+    if (firstArticle == 1) {
+        openDialog("#helpdialog2", { my: "left top", at: "right-20 top+20%", of: $("#articles") });
+        firstArticle = 2;
+
+        // popup will fade out automatically after mouse enters articles div
+        $("#articles").mouseenter( function () {
+            setTimeout( function() { $("#helpdialog2").dialog("close"); }, 4000);
+        })
+ 
+    }
+
     loadedArts++;
     console.log("arts: " + loadedArts);
 
@@ -288,8 +370,14 @@ function processPicture(index, item) {
 
     var location = getLocation(item);
 
-    if (location != null) {
+    if (location !== null) {
         placeMarker(item, location[0], location[1]);
+
+        // Help dialog
+        if (firstMarker == 1) {
+            openDialog("#helpdialog3", { my: "right bottom", at: "right-10% bottom-10%", of: $("#map_canvas") });
+            firstMarker = 2;
+        }
 
         loadedPics++;
         console.log("pics: " + loadedPics);
@@ -493,6 +581,17 @@ function placeMarker(item, markerPos, address) {
         //save openinfobox
         openinfobox = infoboxes[index];
 
+        //show help dialog
+        if (firstPhoto == 1) {
+            openDialog("#helpdialog4", { my: "right top", at: "right-10% top+10%", of: $("#map_canvas") });
+            firstPhoto = 2;
+
+            // close marker dialog
+            if (firstMarker == 2) {
+                $("#helpdialog3").dialog( "close" );
+            }
+        }
+
     });
 }
 
@@ -543,7 +642,7 @@ function getImageURL(item, thumburl, ibindex) {
         var metaURL = 'http://bishop.slq.qld.gov.au/webclient/MetadataManager?pid=' + num;
         //console.log(metaURL);
 
-        imgurl = fetchQSLimage(metaURL, ibindex);
+        imgurl = fetchQSLimage(metaURL, ibindex, thumburl, item);
 
     }
 
@@ -561,7 +660,7 @@ function getImageURL(item, thumburl, ibindex) {
 }
 
 
-function fetchQSLimage(metaURL, ibindex) {
+function fetchQSLimage(metaURL, ibindex, thumburl, item) {
 
     /* Fetches images from QSL. Has to do a cross-origin call to get the page source
         of metadata page, which contains the direct URL, and extract it */
@@ -584,6 +683,16 @@ function fetchQSLimage(metaURL, ibindex) {
 
         var excontent = infoboxes[ibindex].getContent();
         var newcontent = excontent.replace(/#/g, imgurl);
+        newcontent = newcontent.replace("img/gif-load-popup.gif", thumburl);
+        newcontent = newcontent.replace("<p rel", "<a rel");
+
+        // var index = imgpopups.length;
+        // imgpopups[index] = ['"' + imgurl + '"', '"' + item.title + '"'];
+        // imgastr += "[" + imgpopups[index] + "],";
+        // popup = "onClick='jQuery.slimbox([" + imgastr.slice(0,-1) + "], " + index +"); return false;'";
+
+        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title + "\"); $(\"#helpdialog4\").dialog(\"close\"); return false;'";
+        newcontent = newcontent.replace("title=", popup + "title=");        
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
 
@@ -598,14 +707,43 @@ function determineContent(item, address, thumburl, imgurl) {
     if (typeof item.snippet === 'string')
         description = item.snippet;
 
+    // Insert loading gif if still waiting for original image url
+    var popup = "";
+    var plink = "p";
+    if (imgurl != '#') {
+        // var index = imgpopups.length;
+        // imgpopups[index] = ['"' + imgurl + '"', '"' + item.title + '"'];
+        // imgastr += "[" + imgpopups[index] + "],";
+        // popup = "onClick='jQuery.slimbox([" + imgastr.slice(0,-1) + "], " + index +"); return false;'";
 
+        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title + "\"); $(\"#helpdialog4\").dialog(\"close\"); return false;'";
+        plink = "a";
+    }
+    else {
+        thumburl = "img/gif-load-popup.gif";
+    }
 
     //infobox HTML
-    var content = "<div class='mapinfobox'> <p><a rel='lightbox' href='" + imgurl + "' onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + description + "\");return false' title='" + item.title + "'><img src='" + thumburl + "' alt='photo'></a> <a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a> <br />" + address + "<br /></p> <p>" + description + "</p> </div>";
+    var content = "<div class='mapinfobox'> <p><" + plink + " rel='lightbox' href='" + imgurl + "' " + popup + " title='" + item.title + "'><img src='" + thumburl + "' alt='photo'></a> <a href='" + item.troveUrl + "' target='_blank'>" + item.title + "</a> <br />" + address + "<br /></p> <p>" + description + "</p> </div>";
     return content;
 }
 
 
 function toggleDiv(div) {
     $(div).toggle();
+}
+
+function GetCookie(name) {
+  var arg=name+"=";
+  var alen=arg.length;
+  var clen=document.cookie.length;
+  var i=0;
+  while (i<clen) {
+    var j=i+alen;
+    if (document.cookie.substring(i,j)==arg)
+      return "here";
+    i=document.cookie.indexOf(" ",i)+1;
+    if (i==0) break;
+  }
+  return null;
 }

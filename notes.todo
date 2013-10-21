@@ -2,7 +2,7 @@ Priority list:
 
  ☐ - (Key info)
  ✔ - Extracting original image @done (13-10-10 20:04)
- ☐ - Help popups
+ ✔ - Help popups @done (13-10-22 01:15)
  ☐ - flatten
  ☐ - ('About' page)
  ☐ - (Flood maps)
@@ -21,6 +21,5 @@ Priority list:
 Bugs/other:
   ☐ properly show photo collections (1 trove record which contains 15 images, for example)
   ☐ parse other image sources
-  ☐ find a way to hide the delay between marker placement and imgurl retrival
   ☐ allow user to view next/previous when in lightbox (group all photos)
     ☐ if a user scroll photos in the lightbox, when they close it, open the infobox of the image they were viewing
