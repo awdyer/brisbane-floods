@@ -1,11 +1,11 @@
 Priority list:
 
- ☐ - (Key info)
+ ✔ - (Key info) @done (13-10-22 03:24)
  ✔ - Extracting original image @done (13-10-10 20:04)
  ✔ - Help popups @done (13-10-22 01:15)
  ☐ - flatten
  ☐ - ('About' page)
- ☐ - (Flood maps)
+ ✔ - (Flood maps) @done (13-10-22 03:24)
 
  ☐ - Styling
   ☐ - color theme
@@ -15,7 +15,7 @@ Priority list:
   ☐ - popups
   ☐ - lightbox
   ☐ - infoboxes
-  ☐ - add loading gifs when you perform a search, click a thumbnail, etc
+  ✔ - add loading gifs when you perform a search, click a thumbnail, etc @done (13-10-22 01:53)
 
 
 Bugs/other:

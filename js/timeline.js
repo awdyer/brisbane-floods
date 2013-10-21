@@ -52,20 +52,16 @@ $(window).load(function () {
 
     console.log("geocode enabled: " + geocode_enabled);
 
-    // Loading overlay
-    $("body").append("<div id='overlay'></div>");
-    $("#overlay").hide();
-
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function () { newSearch(1893); return false; });
-    $("#tm1931").on("click", function () { newSearch(1931); return false; });
-    $("#tm1974").on("click", function () { newSearch(1974); return false; });
-    $("#tm2011").on("click", function () { newSearch(2011); return false; });
-    $("#tm2013").on("click", function () { newSearch(2013); return false; });
+    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1893); return false; });
+    $("#tm1931").on("click", function () { hideInfo(); $(".info1931").show(); newSearch(1931); return false; });
+    $("#tm1974").on("click", function () { hideInfo(); $(".info1974").show(); newSearch(1974); return false; });
+    $("#tm2011").on("click", function () { hideInfo(); $(".info2011").show(); newSearch(2011); return false; });
 
     $("#f_submit").on("click", function () {
         newSearch(-2);
+        hideInfo();
         return false;
     });
 
@@ -94,9 +90,6 @@ $(window).load(function () {
             $("#fp_label").html("Photos");
         }
     });
-
-    //Hide advanced options
-    toggleDiv(".filters");
 
     //Start google map
     geocoder = new google.maps.Geocoder();
@@ -169,7 +162,16 @@ function openDialog(handler, pos) {
         hide: "fade",
         height: 120,
         position: pos
-     }); 
+     });
+}
+
+
+function hideInfo() {
+    //Hide key info
+    $(".info1893").hide();
+    $(".info1931").hide();
+    $(".info1974").hide();
+    $(".info2011").hide();
 }
 
 

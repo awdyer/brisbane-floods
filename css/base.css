@@ -101,6 +101,12 @@ ul, ol {
     /*list-style-type: square;*/
 }
 
+.no-bullet ul {
+    list-style-type: none;
+}
+
+
+
 .tips {
     margin-top: 100px;
 }
