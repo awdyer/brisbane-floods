@@ -171,3 +171,16 @@ ul, ol {
 .ui-dialog-title {
     font-size: 13px;
 }
+
+
+/* Loading overlay */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black url(../img/gif-load-results.gif) no-repeat center;
+    opacity: 0.8;
+    z-index: 5000;
+}

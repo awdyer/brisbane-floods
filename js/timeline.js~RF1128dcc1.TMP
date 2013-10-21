@@ -52,10 +52,6 @@ $(window).load(function () {
 
     console.log("geocode enabled: " + geocode_enabled);
 
-    // Loading overlay
-    $("body").append("<div id='overlay'></div>");
-    $("#overlay").hide();
-
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
     $("#tm1893").on("click", function () { newSearch(1893); return false; });
@@ -125,6 +121,18 @@ $(window).load(function () {
     });
 
 
+    // Create overlay and append to body:
+    // $('<div id="overlay"/>').css({
+    //     position: 'fixed',
+    //     top: 0,
+    //     left: 0,
+    //     width: '100%',
+    //     height: $(window).height() + 'px',
+    //     background: 'white url(img/gif-load-50.gif) no-repeat center'
+    // }).hide().appendTo('body');
+    $("#overlay").hide();
+
+
     //If came from startpage, automatically search that year
     var store = new Persist.Store('timeline_year');
     store.get('year_key', function (ok, val) {
@@ -170,17 +178,6 @@ function openDialog(handler, pos) {
         height: 120,
         position: pos
      }); 
-}
-
-
-function firstToggleCheck() {
-    if (firstToggle == 1) {
-        // show the filters dialog a short time after the first search
-        setTimeout( function () {
-            openDialog("#helpdialog5", { my: "center top", at: "center+10% top+10%", of: $(".header") } );
-            firstToggle = 2;
-        }, 8000);
-    }
 }
 
 
@@ -297,7 +294,14 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     if (firstPhoto == 2) {
         $("#helpdialog4").dialog("close");
     }
-    if (firstToggle == 2) {
+    if (firstToggle == 1) {
+        // show the filters dialog a short time after the first search
+        setTimeout( function () {
+            openDialog("#helpdialog5", { my: "center top", at: "center+10% top+10%", of: $(".header") } );
+            firstToggle = 2;
+        }, 8000);
+    }
+    else if (firstToggle == 2) {
         $("#helpdialog5").dialog("close");
     }
 
@@ -365,10 +369,8 @@ function processArticle(index, item) {
     }
 
     //if loaded at least 1 article and picture, hide loading overlay
-    if (loadedArts == 1 && loadedPics > 0) {
+    if (loadedArts == 1 && loadedPics > 0)
         $("#overlay").hide();
-        firstToggleCheck();
-    }
 
     loadedArts++;
     console.log("arts: " + loadedArts);
@@ -397,10 +399,8 @@ function processPicture(index, item) {
         }
 
         //if loaded at least 1 article and picture, hide loading overlay
-        if (loadedArts > 0 && loadedPics == 1) {
+        if (loadedArts > 0 && loadedPics == 1)
             $("#overlay").hide();
-            firstToggleCheck();
-        }
 
         loadedPics++;
         console.log("pics: " + loadedPics);
