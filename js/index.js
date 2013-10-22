@@ -10,9 +10,6 @@ $(window).load(function () {
 
     // $("#f_toggle").on("click", function () { toggleDiv(".filters"); toggleDiv(".timeline"); return false; });
 
-    //Hide advanced options
-    toggleDiv(".filters");
-
 });
 
 //save year in persistent variable which will be loaded on timeline page

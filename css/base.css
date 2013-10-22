@@ -1,3 +1,182 @@
+html{
+    overflow-y:scroll;
+    height:100%
+}
+body{
+    height:100%
+}
+
+.container {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -50px; /* the bottom margin is the negative value of the footer's height */
+}
+
+.row {
+    min-width: 100%;
+}
+
+
+.header {
+    text-align: left;
+    height: 70px;
+    background-color: #0e53a7;
+    box-shadow: 0px 5px 5px #888888;
+    padding: 0px;
+}
+.header a{
+    /*color: #fff;*/
+    font: 37px arial,sans-serif;
+    padding-top: 20px;
+    padding-left: 5px;
+    margin: 0px;
+    font-family: "Times New Roman",Georgia,Serif;
+}
+
+.header a:hover {
+    color: #FFF;
+}
+
+.hometitle{
+    margin-top:100px;
+}
+/*
+.header {
+    border-bottom: 1px solid gray;
+    padding: 0 10px;
+    background-color: #839BE6;
+    margin-top: -10px;
+}
+
+.header h1 {
+    color: #000;
+}
+
+.header a {
+    color: #CFDCE0;
+}
+
+.header a:hover {
+    color: #FFF;
+}*/
+
+
+.row .nomargin{
+    margin-right:0;
+}
+
+.nogutter {
+    /* add this to column divs to remove gutter */
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Timeline navigation */
+.nav{
+    height:79px;
+    width:100%;
+    background-image:url('../img/timeline-back.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    font-size:30px;
+    border: 1px solid white;
+    font-family:"Times New Roman",Georgia,Serif;
+}
+
+.nav:after{
+    content: ".";
+    display: block;
+    line-height: 1px;
+    font-size: 1px;
+    clear: both;
+}
+
+ul#timeline-nav{
+    list-style: none;
+    padding: 0;
+    padding-left:10.6%;
+    width: 100%;
+    font-size: 0.8em;
+}
+
+ul#timeline-nav li{
+    display: block;
+    float: left;
+    width: 22%;
+    margin: 0;
+    padding: 0;
+}
+
+ul#timeline-nav li a{
+    display: block;
+    height:50px;
+    width: 100%;
+    padding-top:5px;
+    /*padding-left:20px;*/
+    color: #fff;
+    text-decoration: none;
+    background: #a3c3ea;
+    box-shadow: 0px 5px 5px #000;
+}
+
+#navcontainer>ul#timeline-nav li a {
+    width: auto; 
+}
+
+ul#timeline-nav li.active a
+{
+    background: #04346c;
+    color: #a3c3ea;
+}
+
+ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
+    {
+    color: #a3c3ea;
+    background: #04346c;
+    border-color: #aaab9c #fff #fff #ccc;
+    box-shadow: none;
+    box-shadow: inset 0 0 10px #000;
+}
+
+
+
+/*.footer {
+    border-top: 1px solid gray;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #839BE6;
+}*/
+
+.footer {
+    clear: both;
+    width: 100%;
+    height: 50px;
+    background-color:#04346c;
+    border-top: 2px solid gray;
+    box-shadow: 0px -5px 5px #888888;
+    padding-top:10px;
+    padding-right:3px;
+}
+
+
+.seemore {
+    margin-top: 4px;
+}
+
+.leftside {
+    /*border-top: 1px solid gray;*/
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.filters {
+    margin-top: 25px;
+}
+
 #map_canvas {
     height: 550px;
 }
@@ -5,9 +184,22 @@
 .leftside {
     max-height: 550px;
     overflow: auto;
+
+    margin-left: 5px;
+    padding-right: 0px;
 }
 
-.row {min-width:100% !important; }
+
+.push{
+    margin-top:10px;
+    height:50px;
+    clear: both;
+}
+
+#articles strong {
+    /* remove bolding from article results */
+    font-weight: normal;
+}
 
 .f_year {
     width: 60px !important;
@@ -38,44 +230,6 @@
     margin-bottom: 10px !important;
 }
 
-
-
-.nogutter {
-    /* add this to column divs to remove gutter */
-    margin: 0;
-    padding: 0;
-}
-
-.header {
-    border-bottom: 1px solid gray;
-    padding: 0 10px;
-    background-color: #839BE6;
-    margin-top: -10px;
-}
-
-.header h1 {
-    color: #000;
-}
-
-.header a {
-    color: #CFDCE0;
-}
-
-.header a:hover {
-    color: #FFF;
-}
-
-.footer {
-    border-top: 1px solid gray;
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #839BE6;
-}
-
-
-.seemore {
-    margin-top: 4px;
-}
 
 
 /* Buttons */

@@ -2,7 +2,7 @@
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
 var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
-var cookie = "ZZZZZ3"; //used for first time visitor cookie
+var cookie = "ZZZZ5"; //used for first time visitor cookie
 
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -54,7 +54,7 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1893); return false; });
+    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1931); return false; });
     $("#tm1931").on("click", function () { hideInfo(); $(".info1931").show(); newSearch(1931); return false; });
     $("#tm1974").on("click", function () { hideInfo(); $(".info1974").show(); newSearch(1974); return false; });
     $("#tm2011").on("click", function () { hideInfo(); $(".info2011").show(); newSearch(2011); return false; });
@@ -150,7 +150,6 @@ function firstTimeVisitor() {
     firstMarker = 1;
     firstPhoto = 1;
     firstToggle = 1;
-
     // $("#helpdialog1").dialog( {
     //     position: { my: "right top", at: "right bottom", of: $(".timeline") }
     // });
@@ -181,8 +180,19 @@ function firstToggleCheck() {
         setTimeout( function () {
             openDialog("#helpdialog5", { my: "center top", at: "center+10% top+10%", of: $(".header") } );
             firstToggle = 2;
-        }, 8000);
+        }, 15000);
     }
+}
+
+
+function activeButton(handler) {
+    $("#tmb1893").attr({ class: "notactive"});
+    $("#tmb1931").attr({ class: "notactive"});
+    $("#tmb1974").attr({ class: "notactive"});
+    $("#tmb2011").attr({ class: "notactive"});
+
+    if (handler !== 'undefined')
+        $(handler).attr({ class: "active"});
 }
 
 
@@ -192,11 +202,18 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
 
     //Do a new search, clear existing results
 
+    //show loading overlay
+    $("#overlay").show();
+    $(".seemore").hide();
+    $(".anyarticles").show();
+
     //default value for searchTerm is "brisbane floods"
     searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods " + searchTerm;
 
     //if searchYear is -2, minYear and maxYear have manually been passed
     if (searchYear != -2) {
+
+        activeButton("#tmb" + searchYear);
 
         var searchTermA = "brisbane floods";
         var minYearA = searchYear - 1;
@@ -209,6 +226,9 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
         var maxResultsP = 100;
     }
     else {
+
+        activeButton();
+
         //Get article filters
         var searchTermA = "brisbane floods " + $("#fa_area").val() + " " + $("#fa_keywords").val();
         // if ($("#fa_exclude").val() != "")
@@ -279,9 +299,6 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     map.clearMarkers();
     if (openinfobox) openinfobox.close();
 
-    //show loading overlay
-    $("#overlay").show();
-
     //search
     searchArticles(searchTermA, minYearA, maxYearA, maxResultsA);
     searchPictures(searchTermP, minYearP, maxYearP, maxResultsP);
@@ -350,7 +367,7 @@ function searchPictures(searchTerm, minYear, maxYear, maxResults) {
 
 function processArticle(index, item) {
 
-    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='" + item.troveUrl + "' target='_blank'>" + item.title.value + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>"
+    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='" + item.troveUrl + "' target='_blank'>" + item.title.value + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>";
 
     $('#articles').append(text);
 
@@ -362,14 +379,17 @@ function processArticle(index, item) {
         // popup will fade out automatically after mouse enters articles div
         $("#articles").mouseenter( function () {
             setTimeout( function() { $("#helpdialog2").dialog("close"); }, 4000);
-        })
+        });
  
     }
 
-    //if loaded at least 1 article and picture, hide loading overlay
-    if (loadedArts == 1 && loadedPics > 0) {
+    //if loaded at least 1 article hide loading overlay
+    if (loadedArts == 1) {
         $("#overlay").hide();
+        $(".seemore").show(); //show 'See more'
+        $(".anyarticles").hide();
         firstToggleCheck();
+
     }
 
     loadedArts++;
@@ -399,7 +419,7 @@ function processPicture(index, item) {
         }
 
         //if loaded at least 1 article and picture, hide loading overlay
-        if (loadedArts > 0 && loadedPics == 1) {
+        if (loadedPics == 1) {
             $("#overlay").hide();
             firstToggleCheck();
         }
@@ -486,7 +506,7 @@ function getLocation(item) {
         //check if it contains lat/long
         var point = address.match(/-?\d+\.\d+/g);
 
-        if (typeof point !== 'undefined' && point != null) {
+        if (typeof point !== 'undefined' && point !== null) {
 
             var lat = parseFloat(point[0]);
             var lng = parseFloat(point[1]);
