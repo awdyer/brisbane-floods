@@ -9,6 +9,7 @@ var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'lo
 var prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA, prevPageA = 0;
 var prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP, prevPageP = 0;
 var fUseSame = false;
+var geocodeWaiting = []; //stores function waiting to be executed
 
 var loadedPics, loadedArts, codedPics;
 
@@ -54,7 +55,7 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1931); return false; });
+    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1893); return false; });
     $("#tm1931").on("click", function () { hideInfo(); $(".info1931").show(); newSearch(1931); return false; });
     $("#tm1974").on("click", function () { hideInfo(); $(".info1974").show(); newSearch(1974); return false; });
     $("#tm2011").on("click", function () { hideInfo(); $(".info2011").show(); newSearch(2011); return false; });
@@ -206,6 +207,11 @@ function newSearch(searchYear, searchTerm, minYear, maxYear) {
     $("#overlay").show();
     $(".seemore").hide();
     $(".anyarticles").show();
+
+    //cancel all current geocoding
+    for (var i = 0; i<geocodeWaiting.length; i++) {
+        clearTimeout(geocodeWaiting[i]);
+    }
 
     //default value for searchTerm is "brisbane floods"
     searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods " + searchTerm;
@@ -433,7 +439,7 @@ function processPicture(index, item) {
 
         if (geocode_enabled) {
             geocoder_wait += geocode_delay; //Can't do too many queries per second
-            setTimeout(function () { codeAddress(item); }, geocoder_wait);
+            geocodeWaiting.push( setTimeout(function () { codeAddress(item); }, geocoder_wait) );
         }
     }
 }

@@ -18,6 +18,13 @@ Priority list:
   ✔ - add loading gifs when you perform a search, click a thumbnail, etc @done (13-10-22 01:53)
 
 
+ ☐ About page
+ ☐ infobox layout & styling
+ ☐ articles layout & styling
+ ☐ photos 'load more'
+ ☐ normalise fonts and colours (including button)
+
+
 Bugs/other:
   ☐ properly show photo collections (1 trove record which contains 15 images, for example)
   ☐ parse other image sources
