@@ -69,13 +69,17 @@ $(window).load(function () {
     $("#f_toggle").on("click", function () {
         toggleDiv(".filters");
         toggleDiv(".timeline");
+        if ($("#f_toggle").text() == "Show Filters") 
+            $("#f_toggle").text("Show Timeline");
+        else
+            $("#f_toggle").text("Show Filters");
         $("#helpdialog5").dialog("close");
         return false;
     });
     $("#a_load").on("click", function () {
-        searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); return false; });
+        searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); $("#overlay").show(); return false; });
     $("#p_load").on("click", function () {
-        searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); return false; });
+        searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); $("#overlay").show(); return false; });
 
     $("#f_usesame").on("click", function() {
         fUseSame = !fUseSame;
@@ -91,6 +95,15 @@ $(window).load(function () {
             $("#fp_label").html("Photos");
         }
     });
+
+
+    //Resize map canvas based on window height
+    var windowheight = $(window).height();
+    if (windowheight * 0.85 > 550)
+    {
+        $("#map_canvas").css("height", windowheight * 0.67);
+        $(".leftside").css("height", windowheight * 0.67);
+    }
 
     //Start google map
     geocoder = new google.maps.Geocoder();
@@ -373,7 +386,10 @@ function searchPictures(searchTerm, minYear, maxYear, maxResults) {
 
 function processArticle(index, item) {
 
-    var text = "<p><h3>" + item.heading + "</h3>" + "<h4><a href='" + item.troveUrl + "' target='_blank'>" + item.title.value + "</a></h4>" + item.snippet + "</p><hr width='40%' align='center'/>";
+    var source = item.title.value;
+    source = source.slice(0, source.indexOf("(") - 1);
+
+    var text = "<p><h4>" + item.heading + "</h4>" + "<h5><em>" + source + "</em></h5>" + item.snippet + "</p><p><p><a href='" + item.troveUrl + "' target='_blank'>(view original)</a></p><hr width='40%' align='center'/>";
 
     $('#articles').append(text);
 

@@ -49,7 +49,7 @@
             <div class="row nomargin">
                 
                         <div class="large-2 columns push-10">
-                            <a id="f_toggle" href="#" style="font-size: 10px;">Toggle</a>
+                            <a id="f_toggle" href="#">Show Filters</a>
                         </div>
             </div>
 
@@ -116,8 +116,13 @@
 
                         <!-- Filter search -->
                         <div class="row">
+                        <div class="large-7 columns nopleft">
                             <input id="f_usesame" type="checkbox">
                             <span>Use the same filters for Articles and Photos</span>
+                        </div>
+                        <div class="large-3 columns pull-1 nopleft">
+                            <span id="p_load" class="seemore"><a href="#"> Load more photos</a></span>
+                        </div>
                         </div>
                         <div class="row"><button id="f_submit" class="small">Search</button></div>
 
@@ -272,7 +277,7 @@
 
                     
                         <div class="leftside">
-                        <h2><em>Newspaper Articles</em></h2>
+                        <h3 class="nparts">Newspaper Articles</h3>
                         <div class="anyarticles hide"><em>None found</em></div>
                             <div id="articles"></div>
                             <div id="a_load" class="seemore hide"><a href="#">See more articles</a></div>
@@ -293,7 +298,11 @@
         </div>
 
             <div class="footer">
-                <div class="right">
+                <span class="footerlinks">
+                    <a href="about.html">About</a> | 
+                    <a href="mailto:brisbane.floods.timeline@gmail.com">Contact</a>
+                </span>
+                <div class="right footertrove">
                     <!-- Powered by Trove -->
                     <a href="http://trove.nla.gov.au/" target="_blank"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
                 </div>

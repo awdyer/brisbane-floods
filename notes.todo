@@ -4,25 +4,26 @@ Priority list:
  ✔ - Extracting original image @done (13-10-10 20:04)
  ✔ - Help popups @done (13-10-22 01:15)
  ☐ - flatten
- ☐ - ('About' page)
+ ✔ - ('About' page) @done (13-10-24 04:20)
  ✔ - (Flood maps) @done (13-10-22 03:24)
 
  ☐ - Styling
-  ☐ - color theme
-  ☐ - fonts
-  ☐ - layout (map, articles, timeline, filters, heading, footer)
+  ✔ - color theme @done (13-10-24 04:20)
+  ✔ - fonts @done (13-10-24 04:20)
+  ✔ - layout (map, articles, timeline, filters, heading, footer) @done (13-10-24 04:20)
   ☐ - scrollbars
-  ☐ - popups
+  ✔ - popups @done (13-10-24 04:20)
   ☐ - lightbox
-  ☐ - infoboxes
+  ✔ - infoboxes @done (13-10-24 04:20)
   ✔ - add loading gifs when you perform a search, click a thumbnail, etc @done (13-10-22 01:53)
 
 
- ☐ About page
- ☐ infobox layout & styling
- ☐ articles layout & styling
- ☐ photos 'load more'
- ☐ normalise fonts and colours (including button)
+ ✔ About page @done (13-10-24 04:20)
+ ✔ infobox layout & styling @done (13-10-24 04:20)
+ ✔ articles layout & styling @done (13-10-24 04:20)
+ ✔ photos 'load more' @done (13-10-24 04:20)
+ ✔ normalise fonts and colours (including button) @done (13-10-24 04:20)
+ ☐ option to never show popups?
 
 
 Bugs/other:
