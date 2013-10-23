@@ -167,6 +167,7 @@ ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
 
 .leftside {
     /*border-top: 1px solid gray;*/
+    min-height: 100px;
 }
 
 .underline {

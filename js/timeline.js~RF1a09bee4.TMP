@@ -637,8 +637,6 @@ function placeMarker(item, markerPos, address) {
             openDialog("#helpdialog4", { my: "right top", at: "right-10% top+10%", of: $("#map_canvas") });
             firstPhoto = 2;
 
-            setTimeout( function() { $("#helpdialog4").dialog("close"); }, 5000);
-
             // close marker dialog
             if (firstMarker == 2) {
                 $("#helpdialog3").dialog( "close" );
@@ -745,7 +743,7 @@ function fetchQSLimage(metaURL, ibindex, thumburl, item) {
         // popup = "onClick='jQuery.slimbox([" + imgastr.slice(0,-1) + "], " + index +"); return false;'";
 
         popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title + "\"); return false;'";
-        newcontent = newcontent.replace("title=", popup + "title=");
+        newcontent = newcontent.replace("title=", popup + "title=");        
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
 
