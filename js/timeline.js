@@ -10,6 +10,7 @@ var prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA, prevPageA = 0;
 var prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP, prevPageP = 0;
 var fUseSame = false;
 var geocodeWaiting = []; //stores function waiting to be executed
+var disablePopups = false;
 
 var loadedPics, loadedArts, codedPics;
 
@@ -144,6 +145,18 @@ $(window).load(function () {
             }
         }
     });
+    // store.get('disable_popups', function (ok, val) {
+    //     if (ok) {
+    //         if (val == "on") {
+    //             disablePopups = true;
+    //         }
+    //         else
+    //             disablePopups = false;
+
+    //         console.log('disable_popups = ' + disablePopups);
+    //     }
+    // });
+    
 
     // First time visitors
     var visit=GetCookie(cookie);
