@@ -191,7 +191,7 @@ ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
 
 
 .seemore {
-    /*margin-top: 4px;*/
+    margin-top: 4px;
 }
 
 .underline {

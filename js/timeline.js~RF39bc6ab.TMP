@@ -14,8 +14,6 @@ var disablePopups = false;
 var dialog5open = false;
 
 var loadedPics, loadedArts, codedPics;
-var prevLoadedArts = -1;
-var prevLoadedPics = -1;
 
 var infoboxes = []; //new array
 var openinfobox;
@@ -84,10 +82,8 @@ $(window).load(function () {
         return false;
     });
     $("#a_load").on("click", function () {
-        prevLoadedArts = loadedArts;
         searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); $("#overlay").show(); return false; });
     $("#p_load").on("click", function () {
-        prevLoadedPics = loadedPics;
         searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); $("#overlay").show(); return false; });
 
     $("#f_usesame").on("click", function() {
@@ -104,9 +100,6 @@ $(window).load(function () {
             $("#fp_label").html("Photos");
         }
     });
-
-    // bind submit when enter is pressed on textboxes
-    submitOnEnter();
 
 
     //Resize map canvas based on window height
@@ -235,29 +228,6 @@ function activeButton(handler) {
 }
 
 
-function submitOnEnter() {
-    bindEnter("#fa_minYear");
-    bindEnter("#fa_maxYear");
-    bindEnter("#fa_area");
-    bindEnter("#fa_max");
-    bindEnter("#fa_keywords");
-    bindEnter("#fp_minYear");
-    bindEnter("#fp_maxYear");
-    bindEnter("#fp_area");
-    bindEnter("#fp_max");
-}
-
-
-function bindEnter(handler) {
-    $(handler).keypress(function (e) {
-      if (e.which == 13) {
-        $('#f_submit').click();
-        return false;    //<---- Add this line
-      }
-    });
-}
-
-
 function newSearch(searchYear) {
 
     //Only searchYear is required
@@ -277,67 +247,66 @@ function newSearch(searchYear) {
     //default value for searchTerm is "brisbane floods"
     searchTerm = (typeof searchTerm === "undefined") ? "brisbane floods" : "brisbane floods " + searchTerm;
 
-    var searchTermA, minYearA, maxYearA, maxResultsA, searchTermP, minYearP, maxYearP, maxResultsP;
-
     //if searchYear is -2, minYear and maxYear have manually been passed
     if (searchYear != -2) {
 
         activeButton("#tmb" + searchYear);
 
-        searchTermA = "brisbane floods";
-        minYearA = searchYear - 1;
-        maxYearA = searchYear + 2;
-        maxResultsA = 30;
-        searchTermP = "brisbane floods";
-        minYearP = searchYear - 1;
-        maxYearP = searchYear + 2;
-        maxResultsP = 100;
+        var searchTermA = "brisbane floods";
+        var minYearA = searchYear - 1;
+        var maxYearA = searchYear + 2;
+        var maxResultsA = 30;
+
+        var searchTermP = "brisbane floods";
+        var minYearP = searchYear - 1;
+        var maxYearP = searchYear + 2;
+        var maxResultsP = 100;
     }
     else {
 
         activeButton();
 
         //Get article filters
-        searchTermA = "brisbane floods " + $("#fa_area").val() + " " + $("#fa_keywords").val();
+        var searchTermA = "brisbane floods " + $("#fa_area").val() + " " + $("#fa_keywords").val();
         // if ($("#fa_exclude").val() != "")
         //     searchTermA += " NOT " + $("#fa_exclude").val();
 
-        minYearA = $("#fa_minYear").val();
-        if (minYearA === "")
+        var minYearA = $("#fa_minYear").val();
+        if (minYearA == "")
             minYearA = "1000";
 
-        maxYearA = $("#fa_maxYear").val();
-        if (maxYearA === "")
+        var maxYearA = $("#fa_maxYear").val();
+        if (maxYearA == "")
             maxYearA = "3000";
 
-        maxResultsA = $("#fa_max").val();
-        if (maxResultsA === "")
+        var maxResultsA = $("#fa_max").val();
+        if (maxResultsA == "")
             maxResultsA = "30";
 
         //Get picture filters
         if (!fUseSame) {
-            searchTermP = "brisbane floods " + $("#fp_area").val();
+            var searchTermP = "brisbane floods " + $("#fp_area").val();
 
-            minYearP = $("#fp_minYear").val();
-            if (minYearP === "")
+            var minYearP = $("#fp_minYear").val();
+            if (minYearP == "")
                 minYearP = "1000";
 
-            maxYearP = $("#fp_maxYear").val();
-            if (maxYearP === "")
+            var maxYearP = $("#fp_maxYear").val();
+            if (maxYearP == "")
                 maxYearP = "3000";
 
-            maxResultsP = $("#fp_max").val();
-            if (maxResultsP === "")
+            var maxResultsP = $("#fp_max").val();
+            if (maxResultsP == "")
                 maxResultsP = "100";
             //note maxResultsP may not actually return this number of images due to geocoding issues
         } else {
-            searchTermP = "brisbane floods " + $("#fa_area").val();
-            minYearP = minYearA;
-            maxYearP = maxYearA;
-            if (maxResultsA === "")
-                maxResultsP = "100";
+            var searchTermP = searchTermA;
+            var minYearP = minYearA;
+            var maxYearP = maxYearA;
+            if (maxResultsA == "")
+                var maxResultsP = "100";
             else
-                maxResultsP = maxResultsA;
+                var maxResultsP = maxResultsA;
         }
     }
 
@@ -456,7 +425,7 @@ function processArticle(index, item) {
     }
 
     //if loaded at least 1 article hide loading overlay
-    if (loadedArts == 1 || (loadedArts == prevLoadedArts+1 && prevLoadedArts > -1)) {
+    if (loadedArts == 1) {
         $("#overlay").hide();
         $("#a_load").show(); //show 'See more'
         $(".anyarticles").hide();
@@ -491,7 +460,7 @@ function processPicture(index, item) {
         }
 
         //if loaded at least 1 article and picture, hide loading overlay
-        if (loadedPics == 1 || (loadedPics == prevLoadedPics+1 && prevLoadedPics > -1)) {
+        if (loadedPics == 1) {
             $("#overlay").hide();
             $("#p_load").show(); //show 'See more'
             firstToggleCheck();
@@ -563,19 +532,18 @@ function getLocation(item) {
     //Try to get lat/long from location tag returned in Trove results
 
     //Check if location tag exists
-    var address = "";
     if (typeof item.version[0].record[0] === 'object') {
         if (typeof item.version[0].record[0].metadata === 'object') {
             if (typeof item.version[0].record[0].metadata.dc === 'object') {
                 if (typeof item.version[0].record[0].metadata.dc.coverage === 'string') {
-                    address = item.version[0].record[0].metadata.dc.coverage;
+                    var address = item.version[0].record[0].metadata.dc.coverage;
                 }
             }
         }
     }
 
     //If location tag exists, extract lat/long
-    if (typeof address !== "") {
+    if (typeof address !== 'undefined') {
 
         //check if it contains lat/long
         var point = address.match(/-?\d+\.\d+/g);
