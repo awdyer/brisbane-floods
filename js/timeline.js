@@ -431,8 +431,6 @@ function searchArticles(searchTerm, minYear, maxYear, maxResults) {
 
     var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
 
-    http://api.trove.nla.gov.au/result?key=71lcag6a17k5r6a7&encoding=json&zone=newspaper&sortby=relevance&n=30&q=brisbane%20floods&callback=?
-
     prevPageA += maxResults;
 
     //Query Trove, process each article returned
