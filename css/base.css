@@ -306,14 +306,15 @@ input[type="text"] {
     height: 1.6em;
 }
 
+/*
 ul, ol {
     list-style-position: inside;
-    /*list-style-type: square;*/
+    list-style-type: square;
 }
 
 .no-bullet ul {
     list-style-type: none;
-}
+}*/
 
 
 
@@ -438,4 +439,16 @@ h1, h2, h3, h4, h5, h6, p, a, span {
     font-size: 12px;
     vertical-align: top;
     font-weight: bold;
+}
+
+.keyinfo {
+    border: 1px solid navy;
+    margin-bottom: 20px;
+    list-style-type: none;
+    padding: 10px 0;
+}
+
+.keyinfo ul {
+    list-style-type: none;
+    margin-bottom: 0;
 }

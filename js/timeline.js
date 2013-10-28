@@ -61,10 +61,10 @@ $(window).load(function () {
 
     //Set up functions to call when buttons and timeline is clicked
     //Timeline
-    $("#tm1893").on("click", function () { hideInfo(); $(".info1893").show(); newSearch(1893); return false; });
-    $("#tm1931").on("click", function () { hideInfo(); $(".info1931").show(); newSearch(1931); return false; });
-    $("#tm1974").on("click", function () { hideInfo(); $(".info1974").show(); newSearch(1974); return false; });
-    $("#tm2011").on("click", function () { hideInfo(); $(".info2011").show(); newSearch(2011); return false; });
+    $("#tm1893").on("click", function () { newSearch(1893); return false; });
+    $("#tm1931").on("click", function () { newSearch(1931); return false; });
+    $("#tm1974").on("click", function () { newSearch(1974); return false; });
+    $("#tm2011").on("click", function () { newSearch(2011); return false; });
 
     $("#f_submit").on("click", function () {
         newSearch(-2);
@@ -227,6 +227,9 @@ function hideInfo() {
     $(".info1931").hide();
     $(".info1974").hide();
     $(".info2011").hide();
+    $("#keyinfoheader").text("");
+
+    $(".keyinfo").hide();
 }
 
 
@@ -306,6 +309,11 @@ function newSearch(searchYear) {
     if (searchYear != -2) {
 
         activeButton("#tmb" + searchYear);
+
+        hideInfo();
+        $(".info" + searchYear).show();
+        $("#keyinfoheader").text("Key Information - " + searchYear + " Floods");
+        $(".keyinfo").show();
 
         searchTermA = "brisbane floods";
         minYearA = searchYear - 1;
@@ -423,10 +431,12 @@ function searchArticles(searchTerm, minYear, maxYear, maxResults) {
 
     var articleURL = "http://api.trove.nla.gov.au/result?key=" + apiKey + "&encoding=json&zone=" + searchZone + "&sortby=relevance&n=" + maxResults + "&q=" + searchTerm + " date:[" + minYear + " TO " + maxYear + "]&s=" + prevPageA + "&callback=?";
 
+    http://api.trove.nla.gov.au/result?key=71lcag6a17k5r6a7&encoding=json&zone=newspaper&sortby=relevance&n=30&q=brisbane%20floods&callback=?
+
     prevPageA += maxResults;
 
     //Query Trove, process each article returned
-    $.getJSON(articleURL, function (data) {
+    $.getJSON(encodeURI(articleURL), function (data) {
 
         if (data.response.zone[0].records.article) {
             $.each(data.response.zone[0].records.article, processArticle);
@@ -448,7 +458,7 @@ function searchPictures(searchTerm, minYear, maxYear, maxResults) {
     prevPageP += maxResults;
 
     //Query Trove, process each picture returned
-    $.getJSON(pictureURL, function (data) {
+    $.getJSON(encodeURI(pictureURL), function (data) {
 
         if (data.response.zone[0].records.work) {
             $.each(data.response.zone[0].records.work, processPicture);
@@ -462,7 +472,11 @@ function processArticle(index, item) {
     var source = item.title.value;
     source = source.slice(0, source.indexOf("(") - 1);
 
-    var text = "<p><h4>" + item.heading + "</h4>" + "<h5><em>" + source + "</em></h5>" + item.snippet + "</p><p><p><a href='" + item.troveUrl + "' target='_blank'>(view original)</a></p><hr width='40%' align='center'/>";
+    var d = new Date(item.date);
+    var monthnames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+    datestring = monthnames[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+
+    var text = "<p><h4>" + item.heading + "</h4>" + "<h5><em>" + source + "</em></h5><h6>" + datestring + "</h6>" + item.snippet + "</p><p><p><a href='" + item.troveUrl + "' target='_blank'>(view original)</a></p><hr width='40%' align='center'/>";
 
     $('#articles').append(text);
 
