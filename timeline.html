@@ -5,35 +5,22 @@
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title>Brisbane Floods - A Timeline</title>
 
+         <!-- Load external libraries -->
         <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script>
-
+        <script type='text/javascript' src='js/persist-min.js'></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-
-        <script type='text/javascript' src='js/persist-min.js'></script>
-
-        <script type="text/javascript" src="js/timeline.js"></script>
-
-
-        <!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css"> -->
-        <!-- <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
-
-
         <script type="text/javascript" src="js/slimbox2.js"></script>
+
+        <!-- Load external CSS -->
+        <link rel="stylesheet" href="css/foundation.css">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <link rel="stylesheet" href="css/slimbox2.css" type="text/css" media="screen" />
 
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        <!-- // <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
-        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
-
-
-        <link rel="stylesheet" href="css/foundation.css">
-
+        <!-- Load local resources -->
+        <script type="text/javascript" src="js/timeline.js"></script>
         <link rel="stylesheet" type="text/css" href="css/base.css">
-
-
-
 
     </head>
 
@@ -49,7 +36,7 @@
             <div class="row nomargin">
                 
                         <div class="large-2 columns push-10">
-                            <a id="f_toggle" href="#">Show Filters</a>
+                            <span class="f_toggle"><a id="f_toggle" href="#">Show Filters</a></span>
                         </div>
             </div>
 
@@ -120,9 +107,9 @@
                             <input id="f_usesame" type="checkbox">
                             <span>Use the same filters for Articles and Photos</span>
                         </div>
-                        <div class="large-3 columns pull-1 nopleft">
+                        <!-- <div class="large-3 columns pull-1 nopleft">
                             <span id="p_load" class="hide"><a href="#"> Load more photos</a></span>
-                        </div>
+                        </div> -->
                         </div>
                         <div class="row"><button id="f_submit" class="small">Search</button></div>
 
@@ -289,7 +276,7 @@
                 <div class="large-8 columns nogutter">
 
                     <div id="map_canvas"></div>
-                    <!-- <div id="p_load" class="seemore"><a href="#"> Load more photos</a></div> -->
+                    <div id="p_load" class="seemore hide"><a href="#"> Load more photos</a></div>
                 </div>
             </div>
 
@@ -312,9 +299,9 @@
 
             <!-- Help dialogs -->
             <div class="helpdialogs">
-                <div id="helpdialog1" title="Timeline"><p>Try clicking a year on the timeline</p></div>
+                <div id="helpdialog1" title="Timeline"><p>Click a year on the timeline to view information on the major flood event of that year</p></div>
                 <div id="helpdialog2" title="Articles"><p>Browse articles, and click the link to see the original</p></div>
-                <div id="helpdialog3" title="Markers"><p>Try clicking a marker</p></div>
+                <div id="helpdialog3" title="Markers"><p>Click a marker to see a photo of that location</p></div>
                 <div id="helpdialog4" title="Photos"><p>Click the photo thumbnail to see the full size image</p></div>
                 <div id="helpdialog5" title="Filters"><p>You can also toggle between the timeline and advanced search filters</p></div>
             </div>

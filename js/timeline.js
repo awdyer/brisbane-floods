@@ -1,8 +1,8 @@
 
 //global vars
 var apiKey = "71lcag6a17k5r6a7";
-var geocode_enabled = false; //set this to disable geocoding while debugging, since daily queries are limited
-var cookie = "ZZZZ5"; //used for first time visitor cookie
+var geocode_enabled = true; //set this to disable geocoding while debugging, since daily queries are limited
+var cookie = "ZZZZ7"; //used for first time visitor cookie
 
 var map, geocoder, geocoder_wait;
 var geocode_delay = 1000; //500 is just enough as long as user doesn't click 'load more'
@@ -113,8 +113,8 @@ $(window).load(function () {
     var windowheight = $(window).height();
     if (windowheight * 0.85 > 550)
     {
-        $("#map_canvas").css("height", windowheight * 0.65);
-        $(".leftside").css("height", windowheight * 0.65);
+        $("#map_canvas").css("height", windowheight * 0.75);
+        $(".leftside").css("height", windowheight * 0.75);
     }
 
     //Start google map
@@ -527,15 +527,15 @@ function checkValidSource(item) {
             return false;
     }
 
-    var valid = ['flickr.com', 'bishop.slq', 'archivessearch.qld'];
+    var valid = ['flickr.com', 'bishop.slq', 'archivessearch.qld', 'emuseum.anmm'];
 
     for (i=0; i<valid.length; i++) {
         if (thumburl.indexOf(valid[i]) != -1)
             return true;
     }
 
-    //for testing, returns true unless an invalid source is found (above)
-    return true;
+    //for testing, change to return true (so unless an explicitly invalid source is found)
+    return false;
 }
 
 
@@ -755,6 +755,11 @@ function getImageURL(item, thumburl, ibindex) {
         imgurl = thumburl.replace('thumb=true', '');
     }
 
+    //Emuseum (easy)
+    else if (thumburl.indexOf('emuseum.anmm') != -1) {
+        imgurl = thumburl.replace('previews', 'full');
+    }
+
     //QSL (John Oxley Library) (difficult)
     else if (thumburl.indexOf('bishop.slq') != -1) {
 
@@ -771,10 +776,6 @@ function getImageURL(item, thumburl, ibindex) {
     else {
         console.log('source: ' + thumburl);
         imgurl = '#';
-    }
-
-    if (typeof imgurl !== 'undefined') {
-        console.log(imgurl);
     }
 
     return imgurl;
@@ -812,7 +813,10 @@ function fetchQSLimage(metaURL, ibindex, thumburl, item) {
         // imgastr += "[" + imgpopups[index] + "],";
         // popup = "onClick='jQuery.slimbox([" + imgastr.slice(0,-1) + "], " + index +"); return false;'";
 
-        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title + "\"); return false;'";
+        //escape single quotes in title, as they cause it to screw up
+        var title = item.title.replace(/'/g, "");
+
+        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + title + "\"); return false;'";
         newcontent = newcontent.replace("title=", popup + "title=");
         infoboxes[ibindex].setContent(newcontent);
         //console.log(imgurl);
@@ -837,7 +841,7 @@ function determineContent(item, address, thumburl, imgurl) {
         // imgastr += "[" + imgpopups[index] + "],";
         // popup = "onClick='jQuery.slimbox([" + imgastr.slice(0,-1) + "], " + index +"); return false;'";
 
-        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title + "\"); return false;'";
+        popup = "onClick='jQuery.slimbox(\"" + imgurl + "\", \"" + item.title.replace(/'/g, "") + "\"); return false;'";
         plink = "a";
     }
     else {

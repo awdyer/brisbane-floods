@@ -1,13 +1,17 @@
 <html>
 	<head>
+    <!-- Load external libraries -->
 		<script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script>
 		<script type='text/javascript' src='js/persist-min.js'></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-        <link rel="stylesheet" href="css/foundation.css">
+    <!-- Load external CSS -->
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
+    <!-- Load local resources -->
+    <script type="text/javascript" src="js/index.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/base.css">
-
-		<script type="text/javascript" src="js/index.js"></script>
 	</head>
 
 	<body>
@@ -39,7 +43,7 @@
             </div>
             
 
-        <div class="row">
+        <!-- <div class="row">
 
                 <div class="tips small-6 large-centered columns">
                     <h2>New?</h2>
@@ -47,16 +51,16 @@
                         <li>Click a year on the timeline at the top</li>
                         <li>Find an interesting article and view the original</li>
                         <li>Click a marker on the map, then click the photo thumbnail</li>
-                       <!--  <li>For a new search, click a different year on the timeline</li> -->
+                        <li>For a new search, click a different year on the timeline</li>
                     </ol>
-<!--                     <p>&nbsp;</p>
+                  <p>&nbsp;</p>
                     <h2>Tips</h2>
                     <ul>
                         <li>You can toggle between the timeline and advanced search filters at the top</li>
                         <li>You can load more articles/photos (maximum results per search is 100)</li>
-                    </ul> -->
+                    </ul> 
                 </div>
-        </div>
+        </div> -->
 
         <div class="push"></div>
       </div>
@@ -71,6 +75,12 @@
             <a href="http://trove.nla.gov.au/" target="_blank"><img alt="Powered by Trove" src="http://trove.nla.gov.au/general-test/files/2012/01/API-light.png"></a>
           </div>
         </div>
+
+
+        <div class="helpdialogs">
+                <div id="helpdialog1" title="Timeline"><p>Click a year on the timeline to view information on the major flood event of that year</p></div>
+        </div>
+                
 
  
 	</body>
