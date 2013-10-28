@@ -27,8 +27,6 @@ var firstMarker = 0;
 var firstArticle = 0;
 var firstPhoto = 0;
 var firstToggle = 0;
-var popupLoadMore = 0;
-var popupUsingFilters = 0;
 
 //map marker management - global
 google.maps.Map.prototype.markers = [];
@@ -68,7 +66,6 @@ $(window).load(function () {
 
     $("#f_submit").on("click", function () {
         newSearch(-2);
-        if (popupUsingFilters == 1) { $("#helpdialog6").dialog("close"); }
         hideInfo();
         return false;
     });
@@ -84,22 +81,15 @@ $(window).load(function () {
             $("#helpdialog5").dialog("close");
             dialog5open = false;
             openDialog("#helpdialog6", { my: "center top", at: "center+30 top", of: $(".header") }, 150);
-            popupUsingFilters = 1;
         }
         return false;
     });
     $("#a_load").on("click", function () {
         prevLoadedArts = loadedArts;
-        searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); $("#overlay").show();
-        return false;
-    });
+        searchArticles(prevSearchTermA, prevMinYearA, prevMaxYearA, prevMaxResultsA); $("#overlay").show(); return false; });
     $("#p_load").on("click", function () {
         prevLoadedPics = loadedPics;
-        searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); $("#overlay").show();
-        if (popupLoadMore == 1)
-            $("#helpdialog7").dialog("close");
-        return false;
-    });
+        searchPictures(prevSearchTermP, prevMinYearP, prevMaxYearP, prevMaxResultsP); $("#overlay").show(); return false; });
 
     $("#f_usesame").on("click", function() {
         fUseSame = !fUseSame;
@@ -215,7 +205,7 @@ function openDialog(handler, pos, height) {
 
     $(handler).dialog( {
         hide: "fade",
-        height: 120,
+        height: 160,
         position: pos
      });
 }
@@ -241,7 +231,6 @@ function firstToggleCheck() {
 
         setTimeout( function() {
             openDialog("#helpdialog7", { my: "left bottom", at: "left+30 top+30", of: $(".footer") }, 150);
-            popupLoadMore = 1;
         }, 9000);
     }
 }

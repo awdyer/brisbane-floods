@@ -13,6 +13,11 @@ $(window).load(function () {
     // $("#f_toggle").on("click", function () { toggleDiv(".filters"); toggleDiv(".timeline"); return false; });
 
 
+    //terrible hack to fix the footer being on overflow
+    var windowheight = $(window).height();
+    $(".container").css("min-height", windowheight * 0.885);
+
+
     // First time visitors
     var visit=GetCookie(cookie);
     if (visit===null){

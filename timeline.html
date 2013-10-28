@@ -14,7 +14,7 @@
         <script type="text/javascript" src="js/slimbox2.js"></script>
 
         <!-- Load external CSS -->
-        <link rel="stylesheet" href="css/foundation.css">
+        <link rel="stylesheet" href="css/foundation.min.css">
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <link rel="stylesheet" href="css/slimbox2.css" type="text/css" media="screen" />
 
@@ -36,7 +36,7 @@
             <div class="row nomargin">
                 
                         <div class="large-2 columns push-10">
-                            <span class="f_toggle"><a id="f_toggle" href="#">Show Filters</a></span>
+                            <span class="darklink"><a id="f_toggle" href="#">Show Filters</a></span>
                         </div>
             </div>
 
@@ -64,6 +64,8 @@
                     <div class="filters hide">
                         <div class="large-8 large-centered columns">
                         <div class="row">
+
+                        <p class="darktext">Advanced Filters<span class="superscript darklink"><a id="filterhelp" href="#">?</a></span></p>
                         
 
                             <!-- First column - row labels -->
@@ -300,10 +302,12 @@
             <!-- Help dialogs -->
             <div class="helpdialogs">
                 <div id="helpdialog1" title="Timeline"><p>Click a year on the timeline to view information on the major flood event of that year</p></div>
-                <div id="helpdialog2" title="Articles"><p>Browse articles, and click the link to see the original</p></div>
-                <div id="helpdialog3" title="Markers"><p>Click a marker to see a photo of that location</p></div>
-                <div id="helpdialog4" title="Photos"><p>Click the photo thumbnail to see the full size image</p></div>
-                <div id="helpdialog5" title="Filters"><p>You can also toggle between the timeline and advanced search filters</p></div>
+                <div id="helpdialog2" title="Newspaper Articles"><p>Browse articles, and click the link to see the original</p></div>
+                <div id="helpdialog3" title="Photo Markers"><p>Click a marker to see a photo of that location</p></div>
+                <div id="helpdialog4" title="Photos Thumbnails"><p>Click the photo thumbnail to see the full size image</p></div>
+                <div id="helpdialog5" title="Timeline/Filters"><p>You can also toggle between the timeline and advanced search filters</p></div>
+                <div id="helpdialog6" title="Using Filters"><p>Using this search, information is returned for all floods across all years. If some filters are left blank, these are not applied. You can apply different filters to Articles and Photos.</p></div>
+                <div id="helpdialog7" title="Loading More Photos"><p>Click 'Load more photos' at the bottom of the map to load more results. <br>The maximum number of photos that can be found per search is 100 (due to technical limitations).</p></div>
             </div>
 
 
