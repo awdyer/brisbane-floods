@@ -118,13 +118,11 @@ $(window).load(function () {
 
     $("#filterhelp").on("click", function() {
         openDialog("#helpdialog6", { my: "center top", at: "center+30 top", of: $(".header") });
-        return false;
     });
 
     $("#hidepopups").on("click", function() {
-        disablePopups = !disablePopups;
-        return false;
-    });
+        
+    })
 
     // bind submit when enter is pressed on textboxes
     submitOnEnter();
@@ -216,8 +214,6 @@ function firstTimeVisitor() {
 
 
 function openDialog(handler, pos, height) {
-    if (disablePopups) return false;
-
     if (height === 'undefined')
         height = 120;
 

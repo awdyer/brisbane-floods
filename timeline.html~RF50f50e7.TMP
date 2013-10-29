@@ -265,24 +265,24 @@
             </div>
 
             <div class="row">
-                <div class="large-5 columns nogutter">
+                <div class="large-4 columns nogutter">
 
                     
                         <div class="leftside">
                         <h3 class="nparts"><em>Newspaper Articles</em></h3>
                         <div class="anyarticles hide"><em>None found</em></div>
                             <div id="articles"></div>
-                            <div id="a_load" class="seemore darktext hide"><a href="#">See more articles</a></div>
+                            <div id="a_load" class="seemore hide"><a href="#">See more articles</a></div>
                         </div>
-                        <!-- <div id="hidepopups" class="darktext"><a href="#">Disable help popups</a></div> -->
+                        <div id="hidepopups" class="seemore"></div>
 
                         
                 </div>
 
-                <div class="large-7 columns nogutter">
+                <div class="large-8 columns nogutter">
 
                     <div id="map_canvas"></div>
-                    <div id="p_load" class="seemore darktext hide"><a href="#"> Load more photos</a></div>
+                    <div id="p_load" class="seemore hide"><a href="#"> Load more photos</a></div>
                 </div>
             </div>
 
