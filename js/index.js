@@ -14,14 +14,14 @@ $(window).load(function () {
 
 
     // First time visitors
-    var visit=GetCookie(cookie);
-    if (visit===null){
-       firstTimeVisitor();
+    // var visit=GetCookie(cookie);
+    // if (visit===null){
+    //    firstTimeVisitor();
 
-       var expire=new Date();
-       expire=new Date(expire.getTime()+7776000000);
-       document.cookie=cookie+"=here; expires="+expire;
-    }
+    //    var expire=new Date();
+    //    expire=new Date(expire.getTime()+7776000000);
+    //    document.cookie=cookie+"=here; expires="+expire;
+    // }
 
 });
 
