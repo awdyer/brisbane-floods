@@ -11,6 +11,10 @@ a {
     color: #9DB7D3;
 }
 
+* {
+    margin: 0;
+}
+
 a:hover {
     color: #7C91A8;
 }
