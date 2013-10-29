@@ -221,7 +221,7 @@ ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
     padding-right: 0px;
     padding-left: 15px;
 
-    background-color: #F8FAFC;
+    background-color: #FAFAFA;
 
     /*border-top: 1px solid gray;*/
 }
@@ -248,6 +248,10 @@ ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
 
 .nopleft {
     padding-left: 0;
+}
+
+#a_load {
+    margin-left: 5px;
 }
 
 
@@ -289,7 +293,7 @@ ul#timeline-nav li a:hover, ul#timeline-nav li.active a:hover
 
 .seemore {
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 15px;
 }
 
 #hidepopups {
