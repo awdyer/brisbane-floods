@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
         <!-- Load external javascript libraries -->
@@ -6,7 +6,7 @@
         <!-- <script type='text/javascript' src='js/persist-min.js'></script> PersistJS Library -->
 
         <!-- Load external CSS -->
-        <link rel="stylesheet" href="css/foundation.css"> <!-- Foundation CSS framework -->
+        <link rel="stylesheet" href="css/foundation.css" /> <!-- Foundation CSS framework -->
 
         <!-- Load local resources -->
         <link rel="stylesheet" type="text/css" href="css/base.css" />
